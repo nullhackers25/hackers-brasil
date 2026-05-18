@@ -1,7 +1,9 @@
 services:
   - type: web
     name: hackers-brasil
-    runtime: php
+    runtime: image
+    image:
+      url: php:8.2-apache
     startCommand: php -S 0.0.0.0:10000 -t public
     envVars:
       - key: RENDER
