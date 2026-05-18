@@ -1,0 +1,254 @@
+:root {
+    --primary: #0d6efd;
+    --dark: #0a0e17;
+    --darker: #05080f;
+    --neon-green: #0fff50;
+    --neon-blue: #0af2ff;
+    --text-light: #e0e0e0;
+    --text-lighter: #ffffff;
+}
+
+/* ===============================
+   BASE GERAL
+================================ */
+body {
+     margin: 0;
+     padding: 0;
+     font-family: Arial, Helvetica, sans-serif;
+     background-color: var(--dark);
+     color: var(--text-lighter);
+}
+
+.container-principal {
+    max-width: 1100px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+h1 {
+  /* Alinhamento */
+  text-align: center;
+  
+  /* Espaçamento */
+  margin: 12px; /* 10px em cima e embaixo*/
+  
+  /* Tamanho da fonte */
+  font-size: 2.5em; /* ou use px: 36px */
+
+  /* Cor */
+  color: var(--neon-blue);
+}     
+ 
+/* ===============================
+   SECTIONS
+================================ */
+section {
+    margin-bottom: 40px;
+}
+
+section h2 {
+    font-size: 1,5rem;
+    color: #00ffcc;
+    margin-bottom: 10px;
+    border-left: 5px solid #00ffcc;
+    padding-left: 10px;
+}
+
+section p {
+    line-height: 1.6;
+    font-size: 1rem;
+    color: #cfcfcf;
+}
+
+/* ===============================
+   INTRODUÇÃO
+================================ */
+.introducao {
+    background-color: #141821;
+    padding: 20px;
+    border-radius: 6px;
+    border: 1px solid #1f232b;
+}
+
+/* ===============================
+   LISTAS DE COMANDOS / LINKS
+================================ */
+.commands {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+}
+
+.commands li {
+    margin-bottom: 15px;
+}
+
+.commands pre {
+    background-color: #0a0c10;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    border-left: 4px solid #00ffcc;
+}
+
+.commands code {
+    font-family: "Courier New", monospace;
+    font-size: 0.95rem;
+    color: #e0e0e0;
+}
+
+.commands a {
+    color: #00ffcc;
+    text-decoration: none;
+}
+
+.commands a:hover {
+    text-decoration: underline;
+}
+
+.commands i {
+    margin-right: 6px;
+}
+
+/* ===============================
+   TABELAS
+================================ */
+section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+section table thead {
+    background-color: #0a0c10;
+}
+
+section table th,
+section table td {
+    border: 1px solid #1f232b;
+    padding: 12px;
+    text-align: left;
+}
+ 
+section table th {
+    color: #00ffcc;
+    font-weight: bold;
+}
+
+section table tr:nth-child(even) {
+    background-color: #141821;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+footer {
+    background-color: #0a0c10;
+    padding: 20px;
+    text-align: center;
+    border-top: 2px solid #1f232b;
+}
+
+footer p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #cfcfcf;
+}
+
+.redes-sociais {
+    margin-top: 10px;
+}
+
+.redes-sociais a {
+    color: #e0e0e0;
+    margin: 0 10px;
+    font-size: 1.3rem;
+}
+
+.redes-sociais a:hover {
+    color: #00ffcc;
+}
+
+/* ===============================
+   RESPONSIVIDADE GERAL
+================================ */
+
+/* Tablets e telas médias */
+@media (max-width: 1024px) {
+
+    .container {
+        padding: 15px;
+    }
+
+    .header-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .header-container nav {
+        margin-top: 10px;
+    }
+
+    .header-container nav a {
+        margin: 0 10px;
+        display: inline-block;
+    }
+
+    section h2 {
+        font-size: 1.3rem;
+    }
+}
+
+/* Smartphones grandes */
+@media (max-width: 768px) {
+
+    .header-container h1 {
+        font-size: 1.4rem;
+        margin-top: 10px;
+    }
+
+    .commands pre {
+        font-size: 0.85rem;
+        padding: 12px;
+    }
+
+    section p {
+        font-size: 0.95rem;
+    }
+}
+
+/* Smartphones pequenos */
+@media (max-width: 480px) {
+
+    .header-container img.logo {
+        height: 45px;
+    }
+
+    .top-bar {
+        position: static;
+        justify-content: center;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+    }
+
+    .header-container nav a {
+        display: block;
+        margin: 8px 0;
+    }
+
+    section h2 {
+        font-size: 1.15rem;
+    }
+
+    .commands pre {
+        font-size: 0.8rem;
+    }
+
+    footer p {
+        font-size: 0.8rem;
+    }
+
+    .redes-sociais a {
+        font-size: 1.1rem;
+    }
+}

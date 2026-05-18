@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qual Meu IP? - Hackers Brasil</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        .ip-result {
+            background: rgba(5, 8, 15, 0.8);
+            border: 1px solid var(--neon-blue);
+            border-radius: 10px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .ip-address {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green);
+            margin: 20px 0;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .info-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(10, 242, 255, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: left;
+        }
+        
+        .info-card h4 {
+            color: var(--neon-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .info-card h4 i {
+            margin-right: 10px;
+        }
+        
+        #map {
+            height: 300px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid var(--neon-blue);
+        }
+        
+        .loading {
+            color: var(--neon-blue);
+            font-size: 1.2rem;
+        }
+        
+        .copy-btn {
+            background: transparent;
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: all 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: var(--neon-green);
+            color: var(--dark);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-code"></i>
+                    Hackers Brasil
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="sobre.html">Sobre</a></li>
+                        <li><a href="ferramentas.html">Ferramentas</a></li>
+                        <li><a href="recursos.html">Recursos</a></li>
+                        <li><a href="contato.html">Contato</a></li>
+                        <button class="login-btn">Login</button>
+                    </ul>
+                </nav>
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Ferramenta Qual Meu IP -->
+    <section class="about-hacking" style="padding: 60px 0; min-height: 100vh;">
+        <div class="container">
+            <div class="section-title">
+                <h2><i class="fas fa-map-marker-alt"></i> Qual Meu IP?</h2>
+                <p>Descubra seu endereço IP público e informações de localização</p>
+            </div>
+
+            <div class="about-content">
+                <div class="about-text">
+                    <div class="ip-result">
+                        <i class="fas fa-globe-americas" style="font-size: 3rem; color: var(--neon-blue);"></i>
+                        <div class="ip-address" id="ipAddress">
+                            <span class="loading">Detectando seu IP...</span>
+                        </div>
+                        <button class="copy-btn" onclick="copyIP()">
+                            <i class="fas fa-copy"></i> Copiar IP
+                        </button>
+                    </div>
+
+                    <div id="map"></div>
+
+                    <div class="info-grid" id="ipInfo" style="display: none;">
+                        <div class="info-card">
+                            <h4><i class="fas fa-info-circle"></i> Informações do IP</h4>
+                            <p><strong>IP:</strong> <span id="ip"></span></p>
+                            <p><strong>Versão:</strong> <span id="ipVersion"></span></p>
+                            <p><strong>Provedor:</strong> <span id="isp"></span></p>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h4><i class="fas fa-map-marker-alt"></i> Localização</h4>
+                            <p><strong>País:</strong> <span id="country"></span></p>
+                            <p><strong>Cidade:</strong> <span id="city"></span></p>
+                            <p><strong>Região:</strong> <span id="region"></span></p>
+                            <p><strong>CEP:</strong> <span id="postal"></span></p>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h4><i class="fas fa-network-wired"></i> Rede</h4>
+                            <p><strong>Organização:</strong> <span id="org"></span></p>
+                            <p><strong>Timezone:</strong> <span id="timezone"></span></p>
+                            <p><strong>Coordenadas:</strong> <span id="coordinates"></span></p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 40px; padding: 20px; background: rgba(15, 255, 80, 0.1); border-radius: 5px; border-left: 3px solid var(--neon-green);">
+                        <h4 style="color: var(--neon-green); margin-bottom: 10px;"><i class="fas fa-shield-alt"></i> Privacidade Garantida</h4>
+                        <p>Esta ferramenta mostra apenas informações públicas do seu IP. <strong>Não armazenamos nenhum dado</strong> e toda a processamento é feito em tempo real.</p>
+                    </div>
+
+                    <div class="external-links" style="margin-top: 40px;">
+                        <h4>Mais Ferramentas</h4>
+                        <div class="links-grid">
+                            <div class="link-card">
+                                <a href="ferramentas.html">
+                                    <i class="fas fa-tools"></i> Todas as Ferramentas
+                                </a>
+                            </div>
+                            <div class="link-card">
+                                <a href="index.html">
+                                    <i class="fas fa-home"></i> Página Inicial
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Hackers Brasil</h3>
+                    <p>Comunidade dedicada ao ensino ético de segurança da informação.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="sobre.html">Sobre</a></li>
+                        <li><a href="ferramentas.html">Ferramentas</a></li>
+                        <li><a href="recursos.html">Recursos</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="termos-de-servico.html">Termos de Serviço</a></li>
+                        <li><a href="politica-privacidade.html">Política de Privacidade</a></li>
+                        <li><a href="cookies.html">Política de Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2024 Hackers Brasil. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+    let map;
+    let marker;
+    
+    // Função principal com seu token
+    async function detectIP() {
+        document.getElementById('ipAddress').innerHTML = '<span class="loading">Detectando seu IP...</span>';
+        
+        try {
+            const response = await fetch('https://ipinfo.io/json?token=cc0c702f59c03b');
+            const data = await response.json();
+            
+            if (data.ip) {
+                updateUI(data);
+            } else {
+                throw new Error('Dados incompletos');
+            }
+            
+        } catch (error) {
+            console.error('Erro com ipinfo:', error);
+            document.getElementById('ipAddress').innerHTML = 'Erro ao carregar informações';
+        }
+    }
+    
+    // Atualizar a interface com dados do ipinfo
+    function updateUI(data) {
+        document.getElementById('ipAddress').innerHTML = data.ip;
+        
+        // Preencher informações
+        document.getElementById('ip').textContent = data.ip;
+        document.getElementById('ipVersion').textContent = data.ip.includes(':') ? 'IPv6' : 'IPv4';
+        document.getElementById('isp').textContent = data.org || 'Não identificado';
+        document.getElementById('country').textContent = data.country || 'Não identificado';
+        document.getElementById('city').textContent = data.city || 'Não identificada';
+        document.getElementById('region').textContent = data.region || 'Não identificada';
+        document.getElementById('postal').textContent = data.postal || 'Não identificado';
+        document.getElementById('org').textContent = data.org || 'Não identificada';
+        document.getElementById('timezone').textContent = data.timezone || 'Não identificado';
+        
+        // Processar coordenadas
+        if (data.loc) {
+            const [lat, lng] = data.loc.split(',');
+            document.getElementById('coordinates').textContent = data.loc;
+            
+            // Inicializar mapa
+            initMap(parseFloat(lat), parseFloat(lng), data.city);
+        } else {
+            document.getElementById('coordinates').textContent = 'Não disponível';
+            document.getElementById('map').innerHTML = '<p style="text-align: center; padding: 50px;">Localização não disponível</p>';
+        }
+        
+        // Mostrar seção de informações
+        document.getElementById('ipInfo').style.display = 'grid';
+    }
+    
+    // Função para inicializar o mapa
+    function initMap(lat, lng, city) {
+        try {
+            map = L.map('map').setView([lat, lng], 10);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            marker = L.marker([lat, lng]).addTo(map)
+                .bindPopup(`<b>Localização Aproximada</b><br>${city || 'Sua localização'}`)
+                .openPopup();
+                
+        } catch (error) {
+            console.error('Erro ao carregar mapa:', error);
+            document.getElementById('map').innerHTML = '<p style="text-align: center; padding: 50px;">Erro ao carregar o mapa</p>';
+        }
+    }
+    
+    // Função para copiar IP
+    function copyIP() {
+        const ip = document.getElementById('ip').textContent;
+        
+        navigator.clipboard.writeText(ip).then(() => {
+            const btn = document.querySelector('.copy-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+            }, 2000);
+        }).catch(() => {
+            // Fallback para navegadores antigos
+            const textArea = document.createElement('textarea');
+            textArea.value = ip;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            const btn = document.querySelector('.copy-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+            }, 2000);
+        });
+    }
+    
+    // Iniciar quando a página carregar
+    document.addEventListener('DOMContentLoaded', detectIP);
+</script>
+</body>
+</html>

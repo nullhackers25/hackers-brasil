@@ -1,0 +1,335 @@
+:root {
+            --dark: #0a0e17;
+            --darker: #05080f;
+            --neon-green: #0fff50;
+            --neon-blue: #0af2ff;
+            --text-light: #e0e0e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--text-light);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image:
+                radial-gradient(circle at 25% 25%, rgba(10, 242, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(15, 255, 80, 0.1) 0%, transparent 50%);
+        }
+
+        .register-container {
+            background: var(--darker);
+            padding: 40px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 0 20px rgba(10, 242, 255, 0.1);
+            border: 1px solid rgba(10, 242, 255, 0.2);
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .register-header h1 {
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+            margin-bottom: 10px;
+        }
+
+        .register-header p {
+            color: var(--text-light);
+            opacity: 0.8;
+        }
+
+        .register-form .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .register-form label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--neon-green);
+            font-weight: 600;
+        }
+
+        .register-form input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(10, 242, 255, 0.3);
+            border-radius: 4px;
+            color: var(--text-light);
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .register-form input:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 35px;
+            background: none;
+            border: none;
+            color: var(--neon-green);
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .password-toggle:hover {
+            color: var(--neon-blue);
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--neon-green);
+            color: var(--dark);
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 20px 0;
+            font-size: 16px;
+        }
+
+        .register-btn:hover {
+            box-shadow: 0 0 15px var(--neon-green);
+            transform: translateY(-2px);
+        }
+
+        .register-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .register-links a {
+            color: var(--neon-blue);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .register-links a:hover {
+            color: var(--neon-green);
+            text-decoration: underline;
+        }
+
+        /* Modal Token */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 8, 15, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--darker);
+            padding: 40px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 0 30px rgba(15, 255, 80, 0.2);
+            border: 1px solid var(--neon-green);
+            text-align: center;
+        }
+
+        .modal h2 {
+            color: var(--neon-green);
+            margin-bottom: 10px;
+        }
+
+        .modal p {
+            margin-bottom: 25px;
+            color: var(--text-light);
+        }
+
+        .token-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--neon-blue);
+            border-radius: 4px;
+            color: var(--text-light);
+            font-size: 18px;
+            text-align: center;
+            letter-spacing: 3px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .token-input:focus {
+            outline: none;
+            border-color: var(--neon-green);
+            box-shadow: 0 0 15px var(--neon-green);
+        }
+
+        .token-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .token-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-confirm {
+            background: var(--neon-green);
+            color: var(--dark);
+        }
+
+        .btn-confirm:hover {
+            box-shadow: 0 0 15px var(--neon-green);
+        }
+
+        .btn-resend {
+            background: transparent;
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+        }
+
+        .btn-resend:hover {
+            background: var(--neon-blue);
+            color: var(--dark);
+        }
+
+         /* Modal Reenviar Token */
+#modalReenviarToken {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(5, 8, 15, 0.95);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+#modalReenviarToken .modal-content {
+    background: var(--darker);
+    padding: 40px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 0 30px rgba(15, 255, 80, 0.2);
+    border: 1px solid var(--neon-green);
+    text-align: center;
+    position: relative;
+}
+
+#modalReenviarToken h2 {
+    color: var(--neon-green);
+    margin-bottom: 10px;
+}
+
+#modalReenviarToken p {
+    margin-bottom: 25px;
+    color: var(--text-light);
+}
+
+#modalReenviarToken input[type="email"] {
+    width: 100%;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--neon-blue);
+    border-radius: 4px;
+    color: var(--text-light);
+    font-size: 16px;
+    margin-bottom: 20px;
+    transition: all 0.3s;
+}
+
+#modalReenviarToken input[type="email"]:focus {
+    outline: none;
+    border-color: var(--neon-green);
+    box-shadow: 0 0 15px var(--neon-green);
+}
+
+#modalReenviarToken button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: var(--neon-green);
+    color: var(--dark);
+    font-size: 16px;
+}
+
+#modalReenviarToken button[type="submit"]:hover {
+    box-shadow: 0 0 15px var(--neon-green);
+}
+
+/* Botão fechar */
+#modalReenviarToken .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--neon-blue);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+#modalReenviarToken .close:hover {
+    color: var(--neon-green);
+}
+
+
+        @media (max-width: 480px) {
+            .register-container {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+            .token-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(15, 255, 80, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(15, 255, 80, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(15, 255, 80, 0); }
+        }
+
+        .register-btn {
+            animation: pulse 2s infinite;
+        }
+
+        ul.checklist {
+            list-style-type: none;
+            padding-left: 0;
+        }

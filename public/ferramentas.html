@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferramentas - Hackers Brasil</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="cards-pagina-ferramentas.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Estilos específicos para a página de ferramentas */
+        .links-grids {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .link-cards {
+            background: rgba(5, 8, 15, 0.8);
+            border: 1px solid var(--neon-blue);
+            border-radius: 10px;
+            padding: 0;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .link-cards:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-green);
+            box-shadow: 0 10px 20px rgba(10, 242, 255, 0.2);
+        }
+        
+        .link-cards a {
+            display: block;
+            text-decoration: none;
+            padding: 30px 20px;
+            height: 100%;
+        }
+        
+        .link-cards i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .link-cards h4 {
+            color: var(--neon-green);
+            margin: 15px 0;
+            font-size: 1.3rem;
+        }
+        
+        .link-cards p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            opacity: 0.9;
+        }
+        
+        /* Estilo para ferramenta em breve */
+        .link-cards.coming-soon {
+            opacity: 0.7;
+            border-color: var(--text-light);
+        }
+        
+        .link-cards.coming-soon:hover {
+            border-color: var(--text-light);
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .link-cards.coming-soon i,
+        .link-cards.coming-soon h4 {
+            color: var(--text-light) !important;
+        }
+        
+        /* Seção informativa */
+        .info-section {
+            margin-top: 40px;
+            padding: 25px;
+            background: rgba(10, 242, 255, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid var(--neon-blue);
+        }
+        
+        .info-section h4 {
+            color: var(--neon-blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+        
+        .info-section h4 i {
+            margin-right: 10px;
+        }
+        
+        .info-section ul {
+            margin-left: 20px;
+        }
+        
+        .info-section li {
+            margin-bottom: 8px;
+            color: var(--text-light);
+        }
+        
+        .info-section strong {
+            color: var(--neon-green);
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .links-grids {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .link-cards {
+                padding: 0;
+            }
+            
+            .link-cards a {
+                padding: 25px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-code"></i>
+                    Hackers Brasil
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="index.php">Início</a></li>
+                        <li><a href="sobre.html">Sobre</a></li>
+                        <li><a href="ferramentas.html">Ferramentas</a></li>
+                        <li><a href="recursos.html">Recursos</a></li>
+                        <li><a href="contato.html">Contato</a></li>
+                        <button class="login-btn">Login</button>
+                    </ul>
+                </nav>
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo das Ferramentas -->
+    <section class="about-hacking" style="padding: 60px 0; min-height: 100vh;">
+        <div class="container">
+            <div class="section-title">
+                <h2><i class="fas fa-tools"></i> Ferramentas</h2>
+                <p>Utilitários online para segurança, rede e desenvolvimento</p>
+            </div>
+
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Ferramentas Gratuitas da Comunidade</h3>
+                    <p>Desenvolvemos estas ferramentas para auxiliar em tarefas de segurança, rede e desenvolvimento. Todas são gratuitas e de uso educativo.</p>
+
+                    <div class="external-links" style="margin-top: 40px;">
+                        <h4>Ferramentas Disponíveis</h4>
+                        <div class="links-grids">
+                            <!-- Ferramenta 1: Qual Meu IP -->
+                            <div class="link-cards">
+                                <a href="qual-meu-ip.html">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <h4>Qual Meu IP?</h4>
+                                    <p>Descubra seu IP público, localização e informações de rede</p>
+                                </a>
+                            </div>
+
+                            <!-- Ferramenta 2: Medidor de Velocidade -->
+                            <div class="link-cards">
+                                <a href="medidor-internet.html">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                    <h4>Medidor de Velocidade</h4>
+                                    <p>Teste sua velocidade de internet (Download/Upload/Ping)</p>
+                                </a>
+                            </div>
+
+                            <!-- Ferramenta 3: Calculadora IP -->
+                            <div class="link-cards">
+                                <a href="calculadora-ip.html">
+                                    <i class="fas fa-calculator"></i>
+                                    <h4>Calculadora IP</h4>
+                                    <p>Calcule sub-redes, máscaras e informações de rede</p>
+                                </a>
+                            </div>
+
+                            <!-- Ferramenta 4: Gerador de Senhas -->
+                            <div class="link-cards">
+                                <a href="gerador-senhas.html">
+                                    <i class="fas fa-key"></i>
+                                    <h4>Gerador de Senhas</h4>
+                                    <p>Crie senhas fortes e seguras para proteger suas contas</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <h4><i class="fas fa-info-circle"></i> Sobre Nossas Ferramentas</h4>
+                        <p style="margin-bottom: 15px;">Todas as ferramentas são desenvolvidas com foco em:</p>
+                        <ul>
+                            <li><strong>Privacidade:</strong> Não armazenamos seus dados</li>
+                            <li><strong>Educação:</strong> Uso estritamente educativo</li>
+                            <li><strong>Open Source:</strong> Código aberto para aprendizado</li>
+                            <li><strong>Performance:</strong> Rápidas e eficientes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Hackers Brasil</h3>
+                    <p>Comunidade dedicada ao ensino ético de segurança da informação.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="index.php">Início</a></li>
+                        <li><a href="sobre.html">Sobre</a></li>
+                        <li><a href="ferramentas.html">Ferramentas</a></li>
+                        <li><a href="recursos.html">Recursos</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="termos-de-servico.html">Termos de Serviço</a></li>
+                        <li><a href="politica-privacidade.html">Política de Privacidade</a></li>
+                        <li><a href="codigo-conduta.html">Código de Conduta</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2024 Hackers Brasil. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Menu mobile
+        document.querySelector('.mobile-menu').addEventListener('click', function() {
+            document.querySelector('nav ul').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

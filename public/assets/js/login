@@ -1,0 +1,191 @@
+// ==========================================
+// ======= LOGIN.HTML - JS PADRONIZADO ======
+// ==========================================
+document.addEventListener("DOMContentLoaded", function () {
+
+    // ======= ELEMENTOS =======
+    const formLogin = document.getElementById("formLogin");
+    const usuarioEl = document.getElementById("usuario");
+    const senhaEl = document.getElementById("senha");
+    const toggleSenhaBtn = document.getElementById("togglePassword");
+
+    const captchaInput = document.getElementById("captchaInput");
+    const captchaText = document.getElementById("captchaText");
+    const reloadCaptchaBtn = document.getElementById("reloadCaptcha");
+
+    const modalToken = document.getElementById("modalToken");
+    const emailTokenHidden = document.getElementById("emailToken");
+    const tokenInputs = Array.from(document.querySelectorAll(".token-box"));
+    const formToken = document.getElementById("formToken");
+    const resendTokenBtn = document.getElementById("resendTokenBtn");
+    const closeModalToken = document.getElementById("closeModalToken");
+
+    const modalReenviarToken = document.getElementById("modalReenviarToken");
+    const formReenviarToken = document.getElementById("formReenviarToken");
+    const closeReenviarToken = document.getElementById("closeReenviarToken");
+    const cancelarReenviar = document.getElementById("cancelarReenviar");
+
+    // ======= TOGGLE SENHA =======
+    toggleSenhaBtn.addEventListener("click", () => {
+        const type = senhaEl.type === "password" ? "text" : "password";
+        senhaEl.type = type;
+        toggleSenhaBtn.innerHTML = type === "password" ? "<i class='fas fa-eye'></i>" : "<i class='fas fa-eye-slash'></i>";
+    });
+
+    // ======= CAPTCHA SIMPLES =======
+    function gerarCaptcha() {
+        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjklmnpqrstuvwxyz23456789";
+        let c = "";
+        for (let i = 0; i < 6; i++) c += chars.charAt(Math.floor(Math.random() * chars.length));
+        captchaText.value = c;
+        captchaText.setAttribute("aria-readonly", "true");
+    }
+    gerarCaptcha();
+    reloadCaptchaBtn.addEventListener("click", gerarCaptcha);
+
+    function validarCaptcha() {
+        if (!captchaInput || !captchaText) return true;
+        if (captchaInput.value.trim().toUpperCase() !== captchaText.value.trim().toUpperCase()) {
+            alert("CAPTCHA incorreto. Tente novamente.");
+            gerarCaptcha();
+            captchaInput.focus();
+            return false;
+        }
+        return true;
+    }
+
+    // ======= FUNÇÕES MODAL TOKEN =======
+    function abrirModalToken(usuario) {
+        emailTokenHidden.value = usuario;
+        tokenInputs.forEach(i => i.value = "");
+        modalToken.style.display = "flex";
+        setTimeout(() => tokenInputs[0].focus(), 100);
+    }
+
+    function fecharModalToken() {
+        modalToken.style.display = "none";
+    }
+
+    closeModalToken.addEventListener("click", fecharModalToken);
+
+    // ======= NAVEGAÇÃO ENTRE BOXES DO TOKEN =======
+    tokenInputs.forEach((box, idx) => {
+        box.addEventListener("input", () => {
+            box.value = box.value.replace(/\D/g, "");
+            if (box.value && idx < tokenInputs.length - 1) tokenInputs[idx + 1].focus();
+        });
+        box.addEventListener("keydown", (e) => {
+            if (e.key === "Backspace" && box.value === "" && idx > 0) tokenInputs[idx - 1].focus();
+        });
+    });
+
+    // ======= ENVIO FORM LOGIN =======
+formLogin.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (!validarCaptcha()) return;
+
+    const formData = new FormData(formLogin);
+
+    fetch("../codigos_php/login.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(r => r.text())  // ✅ MUDOU: .text() em vez de .json()
+    .then(data => {
+        if (data.includes("token_enviado")) {  // ✅ MUDOU: includes() em vez de data.status
+            abrirModalToken(usuarioEl.value.trim());
+        } else if (data.includes("sucesso")) {  // ✅ MUDOU: includes()
+            window.location.href = "../public/painel/index.html";
+        } else {
+            alert(data);  // ✅ MUDOU: alert direto
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Erro ao conectar com o servidor.");
+    });
+});
+
+    // ======= ENVIO TOKEN =======
+    formToken.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const tokenValue = tokenInputs.map(i => i.value.trim()).join("");
+        if (tokenValue.length !== 6) {
+            alert("Digite os 6 dígitos do token.");
+            return;
+        }
+
+        const fd = new FormData();
+        fd.append("usuario", emailTokenHidden.value);
+        fd.append("token", tokenValue);
+
+        fetch("../codigos_php/verificar_token_login.php", {
+            method: "POST",
+            body: fd,
+            credentials: "same-origin"
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (!data || !data.status) { alert("Resposta inválida do servidor."); return; }
+
+            if (data.status === "sucesso" || data.status === "ok") {
+                window.location.href = "../public/painel/index.html";
+            } else {
+                alert(data.mensagem || "Token inválido.");
+                tokenInputs.forEach(i => i.value = "");
+                tokenInputs[0].focus();
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Erro ao verificar token.");
+        });
+    });
+
+    // ======= REENVIAR TOKEN =======
+    resendTokenBtn.addEventListener("click", function () {
+        fecharModalToken();
+        modalReenviarToken.style.display = "flex";
+        document.getElementById("emailReenviar").value = emailTokenHidden.value;
+    });
+
+    closeReenviarToken.addEventListener("click", function () {
+        modalReenviarToken.style.display = "none";
+    });
+
+    cancelarReenviar.addEventListener("click", function () {
+        modalReenviarToken.style.display = "none";
+        abrirModalToken(emailTokenHidden.value);
+    });
+
+    formReenviarToken.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const emailReenvio = document.getElementById("emailReenviar").value;
+        if (!emailReenvio) { alert("Digite seu e-mail para reenviar o token."); return; }
+
+        const fd = new FormData();
+        fd.append("usuario", emailReenvio);
+
+        fetch("../codigos_php/reenviar_token_login.php", {
+            method: "POST",
+            body: fd,
+            credentials: "same-origin"
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === "sucesso") {
+                alert(data.mensagem);
+                modalReenviarToken.style.display = "none";
+                abrirModalToken(emailReenvio);
+            } else {
+                alert(data.mensagem || "Erro ao reenviar token.");
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Erro ao reenviar token.");
+        });
+    });
+
+});

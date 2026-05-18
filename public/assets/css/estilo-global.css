@@ -1,0 +1,388 @@
+/* ===============================
+   BASE GERAL
+================================ */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #0f1115;
+    color: #e0e0e0;
+}
+
+/* ===============================
+   HEADER
+================================ */
+.header-container {
+    background-color: #0a0c10;
+    padding: 20px 0;
+    border-bottom: 2px solid #1f232b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}  
+
+h1 {
+    color: #00ffcc;
+    margin: 0;
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    max-width: 90%;
+    line-height: 1.25;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.logo {
+    position: absolute;
+    top: 10px;
+    left: 30px;
+    width: 80px;
+    height: auto;
+    border-radius: 15px;
+}
+
+/* ===============================
+   TOP BAR (USUÁRIO LOGADO)
+================================ */
+.top-bar {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.top-bar span {
+    color: #e0e0e0;
+}
+
+.top-bar strong {
+    color: #00ffcc;
+}
+
+.top-bar a {
+    color: #ff5c5c;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.top-bar a:hover {
+    text-decoration: underline;
+}
+
+
+/* ===============================
+   NAV
+================================ */
+nav a {
+    color: #e0e0e0;
+    margin-left: 20px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav a:hover {
+    color: #00ffcc;
+}
+
+
+/* ===============================
+   CONTAINERS
+================================ */
+.container {
+    width: 1100px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+/* ===============================
+   SECTIONS 
+================================ */
+section {
+    margin-bottom: 40px;
+}
+
+section h2 {
+    font-size: 1,5rem;
+    color: #00ffcc;
+    margin-bottom: 10px;
+    border-left: 5px solid #00ffcc;
+    padding-left: 10px;
+}
+
+section h3 {
+    color: #00ffcc;
+    margin-bottom: 10px;
+    border-left: 5px solid #00ffcc;
+    padding-left: 10px;
+}
+
+section p {
+    line-height: 1.6;
+    font-size: 1rem;
+    color: #cfcfcf;
+}
+
+/* ===============================
+   LINKS EM SECTIONS (ESTILO BASE)
+================================ */
+
+section a {
+    color: limegreen;
+    text-decoration: none;
+}
+
+section a:hover {
+    text-decoration: underline;
+}  
+
+/* ===============================
+   ESTILOS ESPECÍFICOS POR PÁGINA
+================================ */
+
+/* ----- Página Kali Linux ----- */
+section.indice nav ul.commands li a {
+    color: limegreen;
+    text-decoration: none;
+}
+
+section.indice nav ul.commands li a:hover {
+    color: limegreen;
+    text-decoration: underline;
+}
+
+/* ----- Página Ferramentas Kali ----- */
+section.ferramentas div.category div.tool h4 a {
+    color: limegreen;
+    text-decoration: none;
+}
+
+section.ferramentas div.category div.tool h4 a:hover {
+    color: limegreen;
+    text-decoration: underline;
+}
+
+/* ----- Página Bettercap -----*/ 
+section li pre code a {
+    color: limegreen;
+    text-decoration: none;
+}
+
+section li pre code a:hover {
+    color: limegreen;
+    text-decoration: underline;
+}
+
+/* ----- Página Infraestrutura Redes -----*/
+section.listas-topicos div.categoria ul.lista-links li a {
+    color: limegreen;
+    text-decoration: none;
+}
+
+section.listas-topicos div.categoria ul.lista-links li a:hover {
+    color: limegreen;
+    text-decoration: underline;
+}       
+
+/* ===============================
+   INTRODUÇÃO
+================================ */
+.introducao {
+    background-color: #141821;
+    padding: 20px; 
+    border: 1px solid #1f232b;
+    border-radius: 6px;
+}
+
+/* ===============================
+   BOTÕES
+================================ */
+button {
+    background-color: #0a0c10;
+    color: #00ffcc;
+    border: 1px solid #1f232b;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #00ffcc;
+    color: #0a0c10;
+}
+
+/* ===============================
+   PRE / CODE
+================================ */
+pre {
+    background-color: #0a0c10;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    border-left: 4px solid #00ffcc;
+}
+
+code {
+    color: limegreen;
+    font-family: "Courier New", monospace;
+    font-size: 0.95rem;
+}
+
+/* ===============================
+   LISTAS
+================================ */
+ul.commands {
+    list-style: none;
+    padding-left: 0;
+}
+
+.commands li {
+    margin-bottom: 15px;
+}
+
+/* ===============================
+   TABELAS
+================================ */
+section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+section table thead {
+    background-color: #0a0c10;
+}
+
+section table th,
+section table td {
+    border: 1px solid #1f232b;
+    padding: 12px;
+    text-align: left;
+}
+
+section table th {
+    color: #00ffcc;
+    font-weight: bold;
+}
+
+section table tr:nth-child(even) {
+    background-color: #141821;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+footer {
+    background-color: #0a0c10;
+    padding: 20px;
+    text-align: center;
+    border-top: 2px solid #1f232b;
+}
+
+footer p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #cfcfcf;
+}
+
+.redes-sociais {
+    margin-top: 10px;
+}
+
+.redes-sociais a {
+    color: #e0e0e0;
+    margin: 0 10px;
+    font-size: 1.3rem;
+}
+
+.redes-sociais a:hover {
+    color: #00ffcc;
+}
+
+/* ===============================
+   RESPONSIVIDADE (MANTIDA)
+================================ */
+
+/* Tablets */
+@media (max-width: 1024px) {
+    .container, section {
+        width: 95%;
+    }
+
+    h1 {
+        font-size: 1.7rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .header-container {
+        padding: 15px 0;
+    }
+
+    .header-container h1 {
+        font-size: 1.4rem;
+        max-width: 95%;
+    }
+
+    .logo {
+        position: relative;
+        margin-bottom: 10px;
+        left: auto;
+        top: auto;
+    }
+
+    nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .container, section {
+        width: 90%;
+    }
+
+    section table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+/* Mobile pequeno */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.3rem;
+        line-height: 1.3;
+        padding: 0 10px;
+    }
+
+    nav a {
+        display: block;
+        margin: 6px 0;
+    }
+
+    section {
+        padding: 15px;
+    }
+}
+
+/* Telas grandes */
+@media (min-width: 1920px) {
+    .container {
+        width: 1400px;
+    }
+
+    section {
+        width: 1350px;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+    }
+}

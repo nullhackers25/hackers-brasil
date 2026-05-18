@@ -1,0 +1,203 @@
+:root {
+    --dark: #0a0e17;
+    --darker: #05080f;
+    --neon-green: #0fff50;
+    --neon-blue: #0af2ff;
+    --text-light: #e0e0e0;
+}
+* {margin:0;padding:0;box-sizing:border-box;font-family:'Courier New', monospace;}
+body {
+    background-color: var(--dark);
+    color: var(--text-light);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image:
+        radial-gradient(circle at 25% 25%, rgba(10, 242, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(15, 255, 80, 0.1) 0%, transparent 50%);
+}
+.login-container {
+    background: var(--darker);
+    padding: 40px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 0 20px rgba(10, 242, 255, 0.1);
+    border: 1px solid rgba(10, 242, 255, 0.2);
+    position: relative;
+}
+.login-header {text-align:center;margin-bottom:20px;}
+.login-header h1 {color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); margin-bottom:8px;}
+.login-header p {color: var(--neon-green); margin-bottom:8px;}
+
+.login-form .form-group {margin-bottom:16px; position:relative;}
+.login-form label {display:block; margin-bottom:8px; color: var(--neon-green);}
+.login-form input[type="text"],
+.login-form input[type="password"],
+.login-form input[type="email"] {
+    width:100%; padding:12px 15px; background: rgba(0,0,0,0.3);
+    border:1px solid rgba(10,242,255,0.3); border-radius:4px; color: var(--text-light);
+    font-size:16px;
+}
+.login-form input:focus {outline:none; border-color: var(--neon-blue); box-shadow: 0 0 10px var(--neon-blue);}
+.password-toggle {position:absolute; right:10px; top:36px; background:none; border:none; color: var(--neon-green); cursor:pointer;}
+
+.remember-me {display:flex; align-items:center; margin-bottom:20px;}
+.remember-me input {width:auto; margin-right:10px;}
+
+.login-btn {
+    width:100%; padding:12px; background: var(--neon-green); color: var(--dark);
+    border:none; border-radius:4px; font-weight:bold; cursor:pointer; transition:all 0.3s; margin-bottom:12px;
+}
+.login-btn:hover {box-shadow:0 0 15px var(--neon-green);}
+
+.login-links {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    padding-top: 14px;
+}
+
+.login-links::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 1px;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--neon-blue),
+        transparent
+    );
+
+    opacity: 0.5;
+}
+
+.login-links a {
+    color: var(--neon-blue);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.login-links a:hover {
+    text-decoration: underline;
+}
+
+/* MODAL DO TOKEN (oculto por padrão) */
+.modal-overlay {
+    display:none;
+    position:fixed;
+    inset:0;
+    background: rgba(10,14,23,0.85);
+    backdrop-filter: blur(4px);
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+}
+.modal-overlay.active {display:flex;}
+
+.modal {
+    background: var(--darker);
+    width: 100%;
+    max-width: 520px;
+    padding: 28px;
+    border-radius: 10px;
+    border: 1px solid rgba(10,242,255,0.15);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+.modal .modal-title {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:12px;
+}
+.modal .modal-title h2 {color: var(--neon-blue); margin:0; text-shadow:0 0 8px var(--neon-blue);}
+.modal .modal-title p {margin:0;color:var(--text-light);opacity:0.85;}
+
+.token-inputs {display:flex; gap:8px; justify-content:center; margin:18px 0 12px;}
+.token-inputs .token-box {
+    width:48px; height:56px; text-align:center; font-size:24px;
+    border-radius:6px; border:1px solid rgba(10,242,255,0.2); background: rgba(0,0,0,0.25);
+    color:var(--text-light);
+}
+.token-inputs .token-box:focus {outline:none; border-color:var(--neon-green); box-shadow:0 0 12px var(--neon-green);}
+
+.token-actions {display:flex; gap:10px; margin-top:10px;}
+.token-actions button {
+    flex:1; padding:12px; border-radius:6px; border:none; font-weight:bold; cursor:pointer;
+}
+.btn-confirm {background:var(--neon-green); color:#001; }
+.btn-resend {background:var(--neon-blue); color:#001;}
+
+/* small helpers */
+.hint {text-align:center;color:var(--text-light);opacity:0.8;font-size:14px;margin-top:6px;}
+.close-x {position:absolute; right:14px; top:10px; color:var(--neon-green); cursor:pointer;}
+
+/* BOTÃO GOOGLE LOGIN */
+.google-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+
+    background: linear-gradient(
+        145deg,
+        rgba(10, 242, 255, 0.12),
+        rgba(0, 0, 0, 0.6)
+    );
+
+    color: var(--text-light);
+    border: 1px solid rgba(10, 242, 255, 0.45);
+    border-radius: 4px;
+
+    font-weight: bold;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    transition: all 0.25s ease;
+}
+
+/* ÍCONE GOOGLE */
+.google-btn i {
+    color: var(--neon-blue);
+    font-size: 18px;
+    text-shadow: 0 0 6px rgba(10, 242, 255, 0.8);
+}
+
+/* HOVER */
+.google-btn:hover {
+    border-color: var(--neon-blue);
+    box-shadow:
+        0 0 10px rgba(10, 242, 255, 0.6),
+        inset 0 0 10px rgba(10, 242, 255, 0.15);
+
+    transform: translateY(-1px);
+}
+
+/* CLIQUE */
+.google-btn:active {
+    transform: translateY(0);
+    box-shadow:
+        0 0 6px rgba(10, 242, 255, 0.4),
+        inset 0 0 12px rgba(0, 0, 0, 0.6);
+}
+
+/* FOCO (acessibilidade) */
+.google-btn:focus-visible {
+    outline: none;
+    box-shadow:
+        0 0 0 2px rgba(10, 242, 255, 0.5),
+        0 0 14px rgba(10, 242, 255, 0.7);
+}

@@ -1,0 +1,84 @@
+/* ===== Reset ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+}
+
+/* ===== Fundo ===== */
+body {
+    background: #05070a; /* Preto azulado elegante */
+    color: #e6f0ff; /* Azul bem claro */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* ===== Título ===== */
+h1 {
+    font-size: 2.6rem;
+    margin-bottom: 15px;
+    text-align: center;
+    color: #4da3ff; /* Azul neon suave */
+    text-shadow: 0 0 8px rgba(77,163,255,0.7);
+}
+
+/* ===== Descrição ===== */
+p {
+    font-size: 1.15rem;
+    text-align: center;
+    max-width: 600px;
+    margin-bottom: 35px;
+    color: #b8d7ff;
+    line-height: 1.6;
+}
+
+/* ===== Área dos botões ===== */
+.botoes-painel {
+    display: flex;
+    gap: 25px;
+}
+
+/* ===== Botões ===== */
+.botoes-painel a {
+    display: inline-block;
+    text-decoration: none;
+    padding: 12px 28px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #dceaff;
+    background: linear-gradient(145deg, #0d1b2a, #1b263b);
+    border: 1px solid #1e3c72; /* Azul escuro */
+    border-radius: 10px;
+    transition: 0.3s ease;
+    box-shadow: 0 0 10px rgba(30, 60, 114, 0.4);
+}
+
+.botoes-painel a:hover {
+    background: linear-gradient(145deg, #1b263b, #2a4a78);
+    border-color: #4da3ff;
+    box-shadow: 0 0 15px rgba(77,163,255,0.7);
+    transform: translateY(-3px);
+}
+
+.botoes-painel a.logout {
+    background: #b30000;
+    color: white;
+}
+
+/* ===== Responsivo ===== */
+@media (max-width: 480px) {
+    .botoes-painel {
+        flex-direction: column;
+        width: 90%;
+        max-width: 260px;
+    }
+
+    .botoes-painel a {
+        text-align: center;
+    }
+}

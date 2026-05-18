@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora IP - Hackers Brasil</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Estilos específicos para a calculadora IP */
+        .calculator-container {
+            background: rgba(5, 8, 15, 0.8);
+            border: 1px solid var(--neon-blue);
+            border-radius: 10px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .ip-input {
+            flex: 1;
+            min-width: 200px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--neon-blue);
+            border-radius: 5px;
+            padding: 12px 15px;
+            color: var(--text-light);
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+        }
+        
+        .ip-input:focus {
+            outline: none;
+            border-color: var(--neon-green);
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+        
+        .calculate-btn {
+            background: transparent;
+            color: var(--neon-green);
+            border: 2px solid var(--neon-green);
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+        
+        .calculate-btn:hover {
+            background: var(--neon-green);
+            color: var(--dark);
+            box-shadow: 0 0 20px var(--neon-green);
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .result-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(10, 242, 255, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .result-card h4 {
+            color: var(--neon-blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .result-card h4 i {
+            margin-right: 10px;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .result-label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        
+        .result-value {
+            color: var(--neon-green);
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        
+        .binary-visualization {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .binary-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .binary-label {
+            color: var(--neon-blue);
+            min-width: 100px;
+            font-weight: bold;
+        }
+        
+        .binary-bits {
+            display: flex;
+            gap: 2px;
+            flex-wrap: wrap;
+        }
+        
+        .bit {
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .bit.network {
+            background: var(--neon-green);
+            color: var(--dark);
+        }
+        
+        .bit.host {
+            background: var(--neon-blue);
+            color: var(--dark);
+        }
+        
+        .subnet-results {
+            margin-top: 30px;
+        }
+        
+        .subnet-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .subnet-table th {
+            background: rgba(10, 242, 255, 0.2);
+            color: var(--neon-blue);
+            padding: 12px;
+            text-align: left;
+            border: 1px solid rgba(10, 242, 255, 0.3);
+        }
+        
+        .subnet-table td {
+            padding: 10px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .subnet-table tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .copy-btn {
+            background: transparent;
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: var(--neon-blue);
+            color: var(--dark);
+        }
+        
+        .error-message {
+            color: #ff4444;
+            background: rgba(255, 68, 68, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 3px solid #ff4444;
+        }
+        
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .ip-input {
+                min-width: auto;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .binary-bits {
+                justify-content: center;
+            }
+            
+            .binary-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .binary-label {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-code"></i>
+                    Hackers Brasil
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="sobre.html">Sobre</a></li>
+                        <li><a href="ferramentas.html">Ferramentas</a></li>
+                        <li><a href="recursos.html">Recursos</a></li>
+                        <li><a href="contato.html">Contato</a></li>
+                        <button class="login-btn">Login</button>
+                    </ul>
+                </nav>
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Calculadora IP -->
+    <section class="about-hacking" style="padding: 60px 0; min-height: 100vh;">
+        <div class="container">
+            <div class="section-title">
+                <h2><i class="fas fa-calculator"></i> Calculadora IP</h2>
+                <p>Calcule sub-redes, máscaras e informações de rede</p>
+            </div>
+
+            <div class="about-content">
+                <div class="about-text">
+                    <div class="calculator-container">
+                        <!-- Entrada de Dados -->
+                        <div class="input-group">
+                            <input type="text" id="ipInput" class="ip-input" placeholder="Ex: 192.168.1.0/24" value="192.168.1.0/24">
+                            <button class="calculate-btn" onclick="calculateIP()">
+                                <i class="fas fa-calculator"></i> Calcular
+                            </button>
+                        </div>
+
+                        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+                        <!-- Resultados Principais -->
+                        <div class="results-grid">
+                            <!-- Informações da Rede -->
+                            <div class="result-card">
+                                <h4><i class="fas fa-network-wired"></i> Informações da Rede</h4>
+                                <div class="result-item">
+                                    <span class="result-label">Endereço de Rede:</span>
+                                    <span class="result-value" id="networkAddress">-</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Máscara de Sub-rede:</span>
+                                    <span class="result-value" id="subnetMask">-</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Notação CIDR:</span>
+                                    <span class="result-value" id="cidrNotation">-</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Endereço de Broadcast:</span>
+                                    <span class="result-value" id="broadcastAddress">-</span>
+                                </div>
+                            </div>
+
+                            <!-- Informações de Host -->
+                            <div class="result-card">
+                                <h4><i class="fas fa-desktop"></i> Informações de Host</h4>
+                                <div class="result-item">
+                                    <span class="result-label">Primeiro IP Útil:</span>
+                                    <span class="result-value" id="firstUsableIP">-</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Último IP Útil:</span>
+                                    <span class="result-value" id="lastUsableIP">-</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Total de Hosts:</span>
+                                    <span class="result-value" id="totalHosts">-</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Hosts Úteis:</span>
+                                    <span class="result-value" id="usableHosts">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Visualização Binária -->
+                        <div class="result-card">
+                            <h4><i class="fas fa-binary"></i> Visualização Binária</h4>
+                            <div class="binary-visualization">
+                                <div class="binary-row">
+                                    <span class="binary-label">Endereço IP:</span>
+                                    <div class="binary-bits" id="ipBinary"></div>
+                                </div>
+                                <div class="binary-row">
+                                    <span class="binary-label">Máscara:</span>
+                                    <div class="binary-bits" id="maskBinary"></div>
+                                </div>
+                                <div class="binary-row">
+                                    <span class="binary-label">Rede:</span>
+                                    <div class="binary-bits" id="networkBinary"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Divisão de Sub-redes -->
+                        <div class="result-card">
+                            <h4><i class="fas fa-sitemap"></i> Divisão de Sub-redes</h4>
+                            <div class="input-group">
+                                <input type="number" id="subnetCount" class="ip-input" placeholder="Número de sub-redes" value="4" min="2" max="256">
+                                <button class="calculate-btn" onclick="calculateSubnets()">
+                                    <i class="fas fa-divide"></i> Dividir
+                                </button>
+                            </div>
+                            <div class="subnet-results">
+                                <table class="subnet-table" id="subnetTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Sub-rede</th>
+                                            <th>Endereço</th>
+                                            <th>Broadcast</th>
+                                            <th>Hosts</th>
+                                            <th>Máscara</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Preenchido via JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informações Educativas -->
+                    <div style="margin-top: 40px; padding: 20px; background: rgba(15, 255, 80, 0.1); border-radius: 5px;">
+                        <h4 style="color: var(--neon-green); margin-bottom: 10px;"><i class="fas fa-graduation-cap"></i> Como Usar</h4>
+                        <p><strong>Formato de entrada:</strong> IP/CIDR (ex: 192.168.1.0/24) ou IP com máscara (ex: 192.168.1.0 255.255.255.0)</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><strong>IP de Rede:</strong> Primeiro endereço da rede</li>
+                            <li><strong>Broadcast:</strong> Último endereço da rede</li>
+                            <li><strong>Hosts úteis:</strong> IPs disponíveis para dispositivos</li>
+                            <li><strong>CIDR:</strong> Notação simplificada da máscara</li>
+                        </ul>
+                    </div>
+
+                    <!-- Links para outras ferramentas -->
+                    <div class="external-links" style="margin-top: 40px;">
+                        <h4>Mais Ferramentas de Rede</h4>
+                        <div class="links-grid">
+                            <div class="link-card">
+                                <a href="qual-meu-ip.html">
+                                    <i class="fas fa-map-marker-alt"></i> Qual Meu IP?
+                                </a>
+                            </div>
+                            <div class="link-card">
+                                <a href="medidor-internet.html">
+                                    <i class="fas fa-tachometer-alt"></i> Medidor de Velocidade
+                                </a>
+                            </div>
+                            <div class="link-card">
+                                <a href="ferramentas.html">
+                                    <i class="fas fa-tools"></i> Todas as Ferramentas
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Hackers Brasil</h3>
+                    <p>Comunidade dedicada ao ensino ético de segurança da informação.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="sobre.html">Sobre</a></li>
+                        <li><a href="ferramentas.html">Ferramentas</a></li>
+                        <li><a href="recursos.html">Recursos</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="termos-de-servico.html">Termos de Serviço</a></li>
+                        <li><a href="politica-privacidade.html">Política de Privacidade</a></li>
+                        <li><a href="codigo-conduta.html">Código de Conduta</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2024 Hackers Brasil. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Funções principais da calculadora IP
+        function calculateIP() {
+            const input = document.getElementById('ipInput').value.trim();
+            const errorDiv = document.getElementById('errorMessage');
+            
+            // Limpar erro anterior
+            errorDiv.style.display = 'none';
+            
+            try {
+                const { ip, mask, cidr } = parseIPInput(input);
+                const result = calculateNetworkInfo(ip, mask, cidr);
+                
+                displayResults(result);
+                displayBinaryVisualization(result);
+                
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.style.display = 'block';
+            }
+        }
+        
+        function parseIPInput(input) {
+            // Suporta formatos: 192.168.1.0/24 ou 192.168.1.0 255.255.255.0
+            const cidrRegex = /^(\d+\.\d+\.\d+\.\d+)\/(\d+)$/;
+            const maskRegex = /^(\d+\.\d+\.\d+\.\d+)\s+(\d+\.\d+\.\d+\.\d+)$/;
+            
+            let ip, mask, cidr;
+            
+            if (cidrRegex.test(input)) {
+                const match = input.match(cidrRegex);
+                ip = match[1];
+                cidr = parseInt(match[2]);
+                mask = cidrToMask(cidr);
+            } else if (maskRegex.test(input)) {
+                const match = input.match(maskRegex);
+                ip = match[1];
+                mask = match[2];
+                cidr = maskToCidr(mask);
+            } else {
+                throw new Error('Formato inválido. Use: IP/CIDR (ex: 192.168.1.0/24) ou IP Máscara (ex: 192.168.1.0 255.255.255.0)');
+            }
+            
+            if (!isValidIP(ip) || !isValidIP(mask)) {
+                throw new Error('Endereço IP ou máscara inválidos');
+            }
+            
+            if (cidr < 0 || cidr > 32) {
+                throw new Error('CIDR deve estar entre 0 e 32');
+            }
+            
+            return { ip, mask, cidr };
+        }
+        
+        function calculateNetworkInfo(ip, mask, cidr) {
+            const ipParts = ip.split('.').map(Number);
+            const maskParts = mask.split('.').map(Number);
+            
+            // Calcular endereço de rede
+            const networkParts = ipParts.map((part, i) => part & maskParts[i]);
+            const networkAddress = networkParts.join('.');
+            
+            // Calcular broadcast
+            const wildcardParts = maskParts.map(part => 255 - part);
+            const broadcastParts = networkParts.map((part, i) => part | wildcardParts[i]);
+            const broadcastAddress = broadcastParts.join('.');
+            
+            // Calcular hosts
+            const totalHosts = Math.pow(2, 32 - cidr);
+            const usableHosts = Math.max(totalHosts - 2, 0);
+            
+            // Primeiro e último IP útil
+            const firstUsable = usableHosts > 0 ? 
+                networkParts.slice(0, 3).concat([networkParts[3] + 1]).join('.') : networkAddress;
+            const lastUsable = usableHosts > 0 ? 
+                broadcastParts.slice(0, 3).concat([broadcastParts[3] - 1]).join('.') : networkAddress;
+            
+            return {
+                networkAddress,
+                subnetMask: mask,
+                cidrNotation: `/${cidr}`,
+                broadcastAddress,
+                firstUsableIP: firstUsable,
+                lastUsableIP: lastUsable,
+                totalHosts,
+                usableHosts,
+                ipDecimal: ip,
+                maskDecimal: mask
+            };
+        }
+        
+        function displayResults(result) {
+            document.getElementById('networkAddress').textContent = result.networkAddress;
+            document.getElementById('subnetMask').textContent = result.subnetMask;
+            document.getElementById('cidrNotation').textContent = result.cidrNotation;
+            document.getElementById('broadcastAddress').textContent = result.broadcastAddress;
+            document.getElementById('firstUsableIP').textContent = result.firstUsableIP;
+            document.getElementById('lastUsableIP').textContent = result.lastUsableIP;
+            document.getElementById('totalHosts').textContent = result.totalHosts.toLocaleString();
+            document.getElementById('usableHosts').textContent = result.usableHosts.toLocaleString();
+        }
+        
+        function displayBinaryVisualization(result) {
+            const ipBinary = decimalToBinary(result.ipDecimal);
+            const maskBinary = decimalToBinary(result.maskDecimal);
+            const networkBinary = decimalToBinary(result.networkAddress);
+            
+            displayBinaryBits('ipBinary', ipBinary, result.cidrNotation.replace('/', ''));
+            displayBinaryBits('maskBinary', maskBinary, result.cidrNotation.replace('/', ''));
+            displayBinaryBits('networkBinary', networkBinary, result.cidrNotation.replace('/', ''));
+        }
+        
+        function displayBinaryBits(elementId, binaryString, cidr) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = '';
+            
+            for (let i = 0; i < 32; i++) {
+                const bit = document.createElement('div');
+                bit.className = 'bit';
+                bit.textContent = binaryString[i];
+                
+                if (i < parseInt(cidr)) {
+                    bit.classList.add('network');
+                } else {
+                    bit.classList.add('host');
+                }
+                
+                // Adicionar separador a cada 8 bits
+                if (i > 0 && i % 8 === 0) {
+                    const separator = document.createElement('span');
+                    separator.style.margin = '0 5px';
+                    separator.textContent = '';
+                    container.appendChild(separator);
+                }
+                
+                container.appendChild(bit);
+            }
+        }
+        
+        function calculateSubnets() {
+            const subnetCount = parseInt(document.getElementById('subnetCount').value);
+            const originalInput = document.getElementById('ipInput').value.trim();
+            
+            if (!originalInput) {
+                alert('Calcule primeiro um endereço de rede');
+                return;
+            }
+            
+            try {
+                const { ip, mask, cidr } = parseIPInput(originalInput);
+                const subnets = divideSubnets(ip, cidr, subnetCount);
+                displaySubnetTable(subnets);
+                
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+        
+        function divideSubnets(ip, originalCidr, subnetCount) {
+            // Cálculo simplificado de divisão de sub-redes
+            const neededBits = Math.ceil(Math.log2(subnetCount));
+            const newCidr = originalCidr + neededBits;
+            
+            if (newCidr > 30) {
+                throw new Error('Muitas sub-redes para a máscara original');
+            }
+            
+            const subnets = [];
+            const increment = Math.pow(2, 32 - newCidr);
+            const networkParts = ip.split('.').map(Number);
+            
+            for (let i = 0; i < subnetCount; i++) {
+                const baseIP = networkParts[3] + (i * increment);
+                const subnetIP = networkParts.slice(0, 3).concat([baseIP]).join('.');
+                const subnetInfo = calculateNetworkInfo(subnetIP, cidrToMask(newCidr), newCidr);
+                
+                subnets.push({
+                    number: i + 1,
+                    network: subnetInfo.networkAddress,
+                    broadcast: subnetInfo.broadcastAddress,
+                    hosts: subnetInfo.usableHosts,
+                    mask: subnetInfo.subnetMask,
+                    cidr: newCidr
+                });
+            }
+            
+            return subnets;
+        }
+        
+        function displaySubnetTable(subnets) {
+            const tbody = document.querySelector('#subnetTable tbody');
+            tbody.innerHTML = '';
+            
+            subnets.forEach(subnet => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${subnet.number}</td>
+                    <td>${subnet.network}/${subnet.cidr}</td>
+                    <td>${subnet.broadcast}</td>
+                    <td>${subnet.hosts}</td>
+                    <td>${subnet.mask}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Funções utilitárias
+        function isValidIP(ip) {
+            const parts = ip.split('.');
+            if (parts.length !== 4) return false;
+            
+            return parts.every(part => {
+                const num = parseInt(part);
+                return num >= 0 && num <= 255;
+            });
+        }
+        
+        function cidrToMask(cidr) {
+            const mask = [];
+            for (let i = 0; i < 4; i++) {
+                const bits = Math.min(8, Math.max(0, cidr - i * 8));
+                mask.push(256 - Math.pow(2, 8 - bits));
+            }
+            return mask.join('.');
+        }
+        
+        function maskToCidr(mask) {
+            const parts = mask.split('.').map(Number);
+            let cidr = 0;
+            parts.forEach(part => {
+                cidr += (part.toString(2).match(/1/g) || []).length;
+            });
+            return cidr;
+        }
+        
+        function decimalToBinary(ip) {
+            return ip.split('.').map(part => {
+                return parseInt(part).toString(2).padStart(8, '0');
+            }).join('');
+        }
+        
+        // Calcular automaticamente ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            calculateIP();
+        });
+
+        function detectMyNetwork() {
+    // Método 1: Tentar WebRTC primeiro
+    return new Promise((resolve, reject) => {
+        // Verificar se WebRTC é suportado
+        if (!window.RTCPeerConnection) {
+            reject(new Error('WebRTC não suportado'));
+            return;
+        }
+
+        const pc = new RTCPeerConnection({ iceServers: [] });
+        let ipFound = false;
+
+        pc.createDataChannel("");
+        pc.createOffer()
+            .then(offer => pc.setLocalDescription(offer))
+            .catch(reject);
+
+        pc.onicecandidate = (ice) => {
+            if (!ice.candidate || ipFound) return;
+
+            // Regex para IPv4 local
+            const ipRegex = /(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)([0-9]{1,3}\.[0-9]{1,3})/;
+            const ipMatch = ice.candidate.candidate.match(ipRegex);
+
+            if (ipMatch && isValidPrivateIP(ipMatch[0])) {
+                ipFound = true;
+                const localIP = ipMatch[0];
+                pc.onicecandidate = null;
+                pc.close();
+
+                // Calcular IP de rede (assumindo /24 para redes comuns)
+                const ipParts = localIP.split('.');
+                const networkIP = `${ipParts[0]}.${ipParts[1]}.${ipParts[2]}.0/24`;
+
+                // Preencher o campo e calcular
+                document.getElementById('ipInput').value = networkIP;
+                calculateIP();
+
+                resolve(localIP);
+            }
+        };
+
+        // Timeout após 5 segundos
+        setTimeout(() => {
+            if (!ipFound) {
+                pc.close();
+                reject(new Error('Tempo esgotado para detecção'));
+            }
+        }, 5000);
+
+    }).catch(error => {
+        // Fallback: Usar um IP comum como exemplo
+        console.log('Detecção automática falhou, usando IP exemplo:', error.message);
+        useCommonNetworkExample();
+    });
+}
+
+   </script>
+</body>
+</html>

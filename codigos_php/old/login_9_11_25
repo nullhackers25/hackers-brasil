@@ -1,0 +1,182 @@
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+date_default_timezone_set('America/Sao_Paulo');
+
+require_once 'conexao.php';
+require_once 'enviar_token_login.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // --- DADOS DO FORMULÁRIO ---
+    $usuario_input = trim($_POST['usuario'] ?? '');
+    $senha = trim($_POST['senha'] ?? '');
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'desconhecido';
+    $navegador = $_SERVER['HTTP_USER_AGENT'] ?? 'desconhecido';
+
+    function getSistemaOperacional($ua) {
+        if (stripos($ua, 'Windows') !== false) return 'Windows';
+        if (stripos($ua, 'Linux') !== false) return 'Linux';
+        if (stripos($ua, 'Mac') !== false) return 'MacOS';
+        if (stripos($ua, 'Android') !== false) return 'Android';
+        if (stripos($ua, 'iPhone') !== false) return 'iOS';
+        return 'Desconhecido';
+    }
+    $sistema_operacional = getSistemaOperacional($navegador);
+
+    if (empty($usuario_input) || empty($senha)) {
+        echo "Preencha todos os campos.";
+        exit;
+    }
+
+    // --- RATE LIMITING COM NOVA ESTRUTURA ---
+    $limite = 5;
+    $janela_segundos = 3600;
+
+    // Conta tentativas recentes deste IP
+    $check = $conn->prepare("
+        SELECT COUNT(*) as tentativas 
+        FROM tentativas_login 
+        WHERE ip = :ip 
+        AND created_at > NOW() - INTERVAL '1 hour'
+        AND type IN ('LOGIN_FAIL', 'LOGIN_FAILS_THRESHOLD')
+    ");
+    $check->execute(['ip' => $ip]);
+    $tentativas_recentes = $check->fetch(PDO::FETCH_ASSOC)['tentativas'];
+
+    if ($tentativas_recentes >= $limite) {
+        echo "Você atingiu o limite de tentativas. Tente novamente mais tarde.";
+        exit;
+    }
+
+    // --- BUSCA USUÁRIO ---
+    $stmt = $conn->prepare("SELECT * FROM usuarios WHERE usuario = :usuario OR email = :usuario LIMIT 1");
+    $stmt->execute(['usuario' => $usuario_input]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // --- VERIFICA SE BLOQUEADO ---
+    $stmt = $conn->prepare("SELECT * FROM blocked_entities WHERE (user_id = :uid OR ip = :ip) AND blocked_until > NOW() LIMIT 1");
+    $stmt->execute(['uid' => $user['id'] ?? 0, 'ip' => $ip]);
+    $bloqueio = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($bloqueio) {
+        // LOG DO BLOQUEIO
+        $stmt = $conn->prepare("
+            INSERT INTO tentativas_login 
+            (user_identifier, user_id, ip, navegador, sistema_operacional, type, details)
+            VALUES (:user_identifier, :user_id, :ip, :navegador, :sistema_operacional, 'LOGIN_BLOCKED', :details)
+        ");
+        $stmt->execute([
+            'user_identifier' => $usuario_input,
+            'user_id' => $user['id'] ?? null,
+            'ip' => $ip,
+            'navegador' => $navegador,
+            'sistema_operacional' => $sistema_operacional,
+            'details' => json_encode(['block_reason' => $bloqueio['reason']])
+        ]);
+        
+        echo "Acesso bloqueado temporariamente.";
+        exit;
+    }
+
+    // --- VALIDA SENHA ---
+    if (!$user || !password_verify($senha, $user['senha_hash'])) {
+        // LOG DA TENTATIVA FALHA
+        $stmt = $conn->prepare("
+            INSERT INTO tentativas_login 
+            (user_identifier, user_id, ip, navegador, sistema_operacional, type, details)
+            VALUES (:user_identifier, :user_id, :ip, :navegador, :sistema_operacional, 'LOGIN_FAIL', :details)
+        ");
+        $stmt->execute([
+            'user_identifier' => $usuario_input,
+            'user_id' => $user['id'] ?? null,
+            'ip' => $ip,
+            'navegador' => $navegador,
+            'sistema_operacional' => $sistema_operacional,
+            'details' => json_encode(['fail_count' => $tentativas_recentes + 1])
+        ]);
+
+        // VERIFICA SE ATINGIU LIMITE PARA BLOQUEAR
+        if ($tentativas_recentes + 1 >= $limite) {
+            $stmt = $conn->prepare("
+                INSERT INTO blocked_entities (user_id, ip, blocked_until, reason) 
+                VALUES (:uid, :ip, NOW() + INTERVAL '30 minutes', 'Tentativas consecutivas excedidas')
+            ");
+            $stmt->execute(['uid' => $user['id'] ?? null, 'ip' => $ip]);
+            
+            // LOG DO BLOQUEIO AUTOMÁTICO
+            $stmt = $conn->prepare("
+                INSERT INTO tentativas_login 
+                (user_identifier, user_id, ip, navegador, sistema_operacional, type, details)
+                VALUES (:user_identifier, :user_id, :ip, :navegador, :sistema_operacional, 'LOGIN_FAILS_THRESHOLD', :details)
+            ");
+            $stmt->execute([
+                'user_identifier' => $usuario_input,
+                'user_id' => $user['id'] ?? null,
+                'ip' => $ip,
+                'navegador' => $navegador,
+                'sistema_operacional' => $sistema_operacional,
+                'details' => json_encode(['blocked_until' => date('Y-m-d H:i:s', strtotime('+30 minutes'))])
+            ]);
+            
+            echo "Você excedeu o número de tentativas. Tente novamente mais tarde.";
+        } else {
+            echo "Usuário ou senha incorretos.";
+        }
+        exit;
+    }
+
+    // --- SE CHEGOU AQUI, SENHA ESTÁ CORRETA ---
+    // LOG DO SUCESSO
+    $stmt = $conn->prepare("
+        INSERT INTO tentativas_login 
+        (user_identifier, user_id, ip, navegador, sistema_operacional, type, details)
+        VALUES (:user_identifier, :user_id, :ip, :navegador, :sistema_operacional, 'LOGIN_SUCCESS', :details)
+    ");
+    $stmt->execute([
+        'user_identifier' => $usuario_input,
+        'user_id' => $user['id'],
+        'ip' => $ip,
+        'navegador' => $navegador,
+        'sistema_operacional' => $sistema_operacional,
+        'details' => json_encode(['with_2fa' => $user['2fa_ativado']])
+    ]);
+
+    // --- VERIFICA SE TEM 2FA ATIVADO ---
+    if (!$user['2fa_ativado']) {
+        // LOGIN DIRETO SEM 2FA
+        session_start();
+        $_SESSION['usuario_id'] = $user['id'];
+        $_SESSION['usuario_nome'] = $user['usuario'];
+        $_SESSION['logado'] = true;
+        
+        echo "sucesso";
+        exit;
+    }
+
+    // --- SE TEM 2FA, GERA TOKEN ---
+    $token = strval(random_int(100000, 999999));
+    $validade = date('Y-m-d H:i:s', strtotime('+30 minutes'));
+
+    $stmt = $conn->prepare("
+        INSERT INTO tokens_login (usuario_id, token_hash, validade, ip_origin, navegador, sistema_operacional)
+        VALUES (:usuario_id, :token_hash, :validade, :ip, :navegador, :sistema_operacional)
+    ");
+    $stmt->execute([
+        'usuario_id' => $user['id'],
+        'token_hash' => password_hash($token, PASSWORD_DEFAULT),
+        'validade' => $validade,
+        'ip' => $ip,
+        'navegador' => $navegador,
+        'sistema_operacional' => $sistema_operacional
+    ]);
+
+    // --- ENVIA TOKEN ---
+    if (enviarTokenLogin($user['email'], $user['usuario'], $token)) {
+        echo "token_enviado";
+    } else {
+        echo "Erro ao enviar token.";
+    }
+}
+?>

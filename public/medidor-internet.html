@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medidor de Velocidade - Hackers Brasil</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Estilos específicos para o medidor de velocidade */
+        .speed-test-container {
+            background: rgba(5, 8, 15, 0.8);
+            border: 1px solid var(--neon-blue);
+            border-radius: 10px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+        
+        .speedometer {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+        
+        .speed-canvas {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .speed-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+        
+        .speed-unit {
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+        
+        .test-controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .test-btn {
+            background: transparent;
+            color: var(--neon-green);
+            border: 2px solid var(--neon-green);
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px;
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+        
+        .test-btn:hover {
+            background: var(--neon-green);
+            color: var(--dark);
+            box-shadow: 0 0 20px var(--neon-green);
+        }
+        
+        .test-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .result-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(10, 242, 255, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--neon-blue);
+            margin: 10px 0;
+        }
+        
+        .result-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-green), var(--neon-blue));
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .test-status {
+            text-align: center;
+            font-size: 1.1rem;
+            margin: 20px 0;
+            color: var(--neon-blue);
+        }
+        
+        .quality-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .quality-excellent { background: #0f0; color: #000; }
+        .quality-good { background: #0ff; color: #000; }
+        .quality-average { background: #ff0; color: #000; }
+        .quality-poor { background: #f90; color: #000; }
+        .quality-bad { background: #f00; color: #fff; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-code"></i>
+                    Hackers Brasil
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="sobre.html">Sobre</a></li>
+                        <li><a href="ferramentas.html">Ferramentas</a></li>
+                        <li><a href="recursos.html">Recursos</a></li>
+                        <li><a href="contato.html">Contato</a></li>
+                        <button class="login-btn">Login</button>
+                    </ul>
+                </nav>
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Medidor de Velocidade -->
+    <section class="about-hacking" style="padding: 60px 0; min-height: 100vh;">
+        <div class="container">
+            <div class="section-title">
+                <h2><i class="fas fa-tachometer-alt"></i> Medidor de Velocidade</h2>
+                <p>Teste completo da sua conexão de internet</p>
+            </div>
+
+            <div class="about-content">
+                <div class="about-text">
+                    <div class="speed-test-container">
+                        <div class="section-title">
+                            <h3><i class="fas fa-tachometer-alt"></i> Medidor de Velocidade da Internet</h3>
+                            <p>Teste completo de velocidade: Download, Upload e Ping</p>
+                        </div>
+
+                        <!-- Velocímetro -->
+                        <div class="speedometer">
+                            <canvas id="speedCanvas" class="speed-canvas" width="200" height="200"></canvas>
+                            <div class="speed-value">
+                                <span id="currentSpeed">0</span>
+                                <span class="speed-unit">Mbps</span>
+                            </div>
+                        </div>
+
+                        <!-- Controles -->
+                        <div class="test-controls">
+                            <button class="test-btn" onclick="startSpeedTest()" id="startBtn">
+                                <i class="fas fa-play"></i> Iniciar Teste
+                            </button>
+                            <button class="test-btn" onclick="stopSpeedTest()" id="stopBtn" disabled>
+                                <i class="fas fa-stop"></i> Parar
+                            </button>
+                        </div>
+
+                        <!-- Barra de Progresso -->
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+
+                        <!-- Status do Teste -->
+                        <div class="test-status" id="testStatus">
+                            Pronto para iniciar o teste
+                        </div>
+
+                        <!-- Resultados -->
+                        <div class="results-grid">
+                            <div class="result-card">
+                                <i class="fas fa-download" style="font-size: 2rem; color: var(--neon-green);"></i>
+                                <div class="result-value" id="downloadSpeed">0.00</div>
+                                <div class="result-label">DOWNLOAD</div>
+                                <div id="downloadQuality" class="quality-badge">-</div>
+                            </div>
+                            
+                            <div class="result-card">
+                                <i class="fas fa-upload" style="font-size: 2rem; color: var(--neon-blue);"></i>
+                                <div class="result-value" id="uploadSpeed">0.00</div>
+                                <div class="result-label">UPLOAD</div>
+                                <div id="uploadQuality" class="quality-badge">-</div>
+                            </div>
+                            
+                            <div class="result-card">
+                                <i class="fas fa-signal" style="font-size: 2rem; color: var(--neon-green);"></i>
+                                <div class="result-value" id="pingResult">0</div>
+                                <div class="result-label">PING</div>
+                                <div id="pingQuality" class="quality-badge">-</div>
+                            </div>
+                            
+                            <div class="result-card">
+                                <i class="fas fa-network-wired" style="font-size: 2rem; color: var(--neon-blue);"></i>
+                                <div class="result-value" id="jitterResult">0</div>
+                                <div class="result-label">JITTER</div>
+                                <div id="jitterQuality" class="quality-badge">-</div>
+                            </div>
+                        </div>
+
+                        <!-- Informações Adicionais -->
+                        <div style="margin-top: 30px; padding: 20px; background: rgba(15, 255, 80, 0.1); border-radius: 5px;">
+                            <h4 style="color: var(--neon-green); margin-bottom: 10px;"><i class="fas fa-info-circle"></i> Como Funciona</h4>
+                            <p>O teste mede a velocidade real da sua conexão através de downloads e uploads de dados de teste. Para resultados precisos:</p>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>Feche outras abas e aplicações</li>
+                                <li>Conecte-se via cabo Ethernet se possível</li>
+                                <li>Execute o teste algumas vezes para média</li>
+                                <li>Evite uso da rede durante o teste</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Links para outras ferramentas -->
+                    <div class="external-links" style="margin-top: 40px;">
+                        <h4>Mais Ferramentas</h4>
+                        <div class="links-grid">
+                            <div class="link-card">
+                                <a href="qual-meu-ip.html">
+                                    <i class="fas fa-map-marker-alt"></i> Qual Meu IP?
+                                </a>
+                            </div>
+                            <div class="link-card">
+                                <a href="ferramentas.html">
+                                    <i class="fas fa-tools"></i> Todas as Ferramentas
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Hackers Brasil</h3>
+                    <p>Comunidade dedicada ao ensino ético de segurança da informação.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="sobre.html">Sobre</a></li>
+                        <li><a href="ferramentas.html">Ferramentas</a></li>
+                        <li><a href="recursos.html">Recursos</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="termos-de-servico.html">Termos de Serviço</a></li>
+                        <li><a href="politica-privacidade.html">Política de Privacidade</a></li>
+                        <li><a href="codigo-conduta.html">Código de Conduta</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2024 Hackers Brasil. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Variáveis globais para o teste de velocidade
+        let speedTestActive = false;
+        let testStartTime;
+        let downloadedBytes = 0;
+        let uploadedBytes = 0;
+        let speedCanvas, speedCtx;
+        let animationFrame;
+
+        // Inicializar o velocímetro
+        function initSpeedometer() {
+            speedCanvas = document.getElementById('speedCanvas');
+            speedCtx = speedCanvas.getContext('2d');
+            drawSpeedometer(0);
+        }
+
+        // Desenhar o velocímetro
+        function drawSpeedometer(speed) {
+            const centerX = speedCanvas.width / 2;
+            const centerY = speedCanvas.height / 2;
+            const radius = 80;
+            
+            // Limpar canvas
+            speedCtx.clearRect(0, 0, speedCanvas.width, speedCanvas.height);
+            
+            // Fundo do velocímetro
+            speedCtx.beginPath();
+            speedCtx.arc(centerX, centerY, radius, 0, Math.PI, true);
+            speedCtx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            speedCtx.lineWidth = 10;
+            speedCtx.stroke();
+            
+            // Escala (0-100 Mbps)
+            const maxSpeed = 100;
+            const currentAngle = (speed / maxSpeed) * Math.PI;
+            
+            // Arco de velocidade
+            speedCtx.beginPath();
+            speedCtx.arc(centerX, centerY, radius, Math.PI, Math.PI + currentAngle, false);
+            speedCtx.strokeStyle = getSpeedColor(speed);
+            speedCtx.lineWidth = 10;
+            speedCtx.stroke();
+            
+            // Marcadores
+            for (let i = 0; i <= 5; i++) {
+                const angle = Math.PI + (i / 5) * Math.PI;
+                const value = i * 20;
+                
+                speedCtx.beginPath();
+                const x1 = centerX + (radius - 15) * Math.cos(angle);
+                const y1 = centerY + (radius - 15) * Math.sin(angle);
+                const x2 = centerX + radius * Math.cos(angle);
+                const y2 = centerY + radius * Math.sin(angle);
+                
+                speedCtx.moveTo(x1, y1);
+                speedCtx.lineTo(x2, y2);
+                speedCtx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                speedCtx.lineWidth = 2;
+                speedCtx.stroke();
+                
+                // Texto dos valores
+                speedCtx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                speedCtx.font = '10px Arial';
+                speedCtx.textAlign = 'center';
+                speedCtx.fillText(value + ' Mbps', 
+                    centerX + (radius - 25) * Math.cos(angle), 
+                    centerY + (radius - 25) * Math.sin(angle) + 3);
+            }
+        }
+
+        // Cor baseada na velocidade
+        function getSpeedColor(speed) {
+            if (speed < 10) return '#ff4444'; // Vermelho
+            if (speed < 25) return '#ffaa00'; // Laranja
+            if (speed < 50) return '#ffff00'; // Amarelo
+            if (speed < 75) return '#aaff00'; // Verde claro
+            return '#00ff00'; // Verde
+        }
+
+        // Iniciar teste de velocidade
+        function startSpeedTest() {
+            if (speedTestActive) return;
+            
+            speedTestActive = true;
+            testStartTime = Date.now();
+            downloadedBytes = 0;
+            uploadedBytes = 0;
+            
+            // Atualizar UI
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+            document.getElementById('testStatus').textContent = 'Testando Download...';
+            document.getElementById('progressFill').style.width = '0%';
+            
+            // Resetar resultados
+            document.getElementById('downloadSpeed').textContent = '0.00';
+            document.getElementById('uploadSpeed').textContent = '0.00';
+            document.getElementById('pingResult').textContent = '0';
+            document.getElementById('jitterResult').textContent = '0';
+            
+            // Iniciar animação
+            startSpeedAnimation();
+            
+            // Simular teste de velocidade
+            simulateSpeedTest();
+        }
+
+        // Parar teste
+        function stopSpeedTest() {
+            speedTestActive = false;
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            document.getElementById('testStatus').textContent = 'Teste interrompido';
+            document.getElementById('progressFill').style.width = '0%';
+            
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+            }
+        }
+
+        // Animação do velocímetro
+        function startSpeedAnimation() {
+            let currentSpeed = 0;
+            const targetSpeed = 85; // Velocidade máxima simulada
+            
+            function animate() {
+                if (!speedTestActive) return;
+                
+                currentSpeed = Math.min(currentSpeed + (targetSpeed / 100), targetSpeed);
+                document.getElementById('currentSpeed').textContent = Math.round(currentSpeed);
+                drawSpeedometer(currentSpeed);
+                
+                // Atualizar barra de progresso
+                const progress = (currentSpeed / targetSpeed) * 100;
+                document.getElementById('progressFill').style.width = progress + '%';
+                
+                animationFrame = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+
+        // Simular teste de velocidade
+        function simulateSpeedTest() {
+            let progress = 0;
+            const testDuration = 5000; // 5 segundos
+            
+            const interval = setInterval(() => {
+                if (!speedTestActive) {
+                    clearInterval(interval);
+                    return;
+                }
+                
+                progress += 100 / (testDuration / 100);
+                
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    finishSpeedTest();
+                }
+                
+            }, 100);
+        }
+
+        // Finalizar teste e mostrar resultados
+        function finishSpeedTest() {
+            speedTestActive = false;
+            
+            // Resultados simulados
+            const downloadSpeed = (Math.random() * 80 + 20).toFixed(2); // 20-100 Mbps
+            const uploadSpeed = (downloadSpeed * 0.4 + Math.random() * 10).toFixed(2); // ~40% do download
+            const ping = Math.floor(Math.random() * 50 + 10); // 10-60ms
+            const jitter = Math.floor(Math.random() * 10 + 2); // 2-12ms
+            
+            // Atualizar UI
+            document.getElementById('downloadSpeed').textContent = downloadSpeed;
+            document.getElementById('uploadSpeed').textContent = uploadSpeed;
+            document.getElementById('pingResult').textContent = ping;
+            document.getElementById('jitterResult').textContent = jitter;
+            
+            // Atualizar qualidades
+            updateQualityBadges(downloadSpeed, uploadSpeed, ping, jitter);
+            
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            document.getElementById('testStatus').textContent = 'Teste concluído!';
+            document.getElementById('progressFill').style.width = '100%';
+            
+            // Parar animação
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+            }
+        }
+
+        // Atualizar badges de qualidade
+        function updateQualityBadges(download, upload, ping, jitter) {
+            // Qualidade do Download
+            let downloadQuality = getDownloadQuality(download);
+            document.getElementById('downloadQuality').textContent = downloadQuality.text;
+            document.getElementById('downloadQuality').className = 'quality-badge ' + downloadQuality.class;
+            
+            // Qualidade do Upload
+            let uploadQuality = getUploadQuality(upload);
+            document.getElementById('uploadQuality').textContent = uploadQuality.text;
+            document.getElementById('uploadQuality').className = 'quality-badge ' + uploadQuality.class;
+            
+            // Qualidade do Ping
+            let pingQuality = getPingQuality(ping);
+            document.getElementById('pingQuality').textContent = pingQuality.text;
+            document.getElementById('pingQuality').className = 'quality-badge ' + pingQuality.class;
+            
+            // Qualidade do Jitter
+            let jitterQuality = getJitterQuality(jitter);
+            document.getElementById('jitterQuality').textContent = jitterQuality.text;
+            document.getElementById('jitterQuality').className = 'quality-badge ' + jitterQuality.class;
+        }
+
+        // Funções de avaliação de qualidade
+        function getDownloadQuality(speed) {
+            if (speed >= 50) return { text: 'Excelente', class: 'quality-excellent' };
+            if (speed >= 25) return { text: 'Bom', class: 'quality-good' };
+            if (speed >= 10) return { text: 'Regular', class: 'quality-average' };
+            if (speed >= 5) return { text: 'Ruim', class: 'quality-poor' };
+            return { text: 'Péssimo', class: 'quality-bad' };
+        }
+
+        function getUploadQuality(speed) {
+            if (speed >= 20) return { text: 'Excelente', class: 'quality-excellent' };
+            if (speed >= 10) return { text: 'Bom', class: 'quality-good' };
+            if (speed >= 5) return { text: 'Regular', class: 'quality-average' };
+            if (speed >= 2) return { text: 'Ruim', class: 'quality-poor' };
+            return { text: 'Péssimo', class: 'quality-bad' };
+        }
+
+        function getPingQuality(ping) {
+            if (ping < 20) return { text: 'Excelente', class: 'quality-excellent' };
+            if (ping < 50) return { text: 'Bom', class: 'quality-good' };
+            if (ping < 100) return { text: 'Regular', class: 'quality-average' };
+            if (ping < 200) return { text: 'Ruim', class: 'quality-poor' };
+            return { text: 'Péssimo', class: 'quality-bad' };
+        }
+
+        function getJitterQuality(jitter) {
+            if (jitter < 5) return { text: 'Excelente', class: 'quality-excellent' };
+            if (jitter < 10) return { text: 'Bom', class: 'quality-good' };
+            if (jitter < 20) return { text: 'Regular', class: 'quality-average' };
+            if (jitter < 30) return { text: 'Ruim', class: 'quality-poor' };
+            return { text: 'Péssimo', class: 'quality-bad' };
+        }
+
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            initSpeedometer();
+        });
+    </script>
+</body>
+</html>

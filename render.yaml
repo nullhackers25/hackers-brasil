@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: hackers-brasil
+    runtime: php
+    startCommand: php -S 0.0.0.0:10000 -t public
+    envVars:
+      - key: RENDER
+        value: true
+      - key: DATABASE_URL
+        value: postgresql://neondb_owner:npg_XNIrFW5Ugzs9@ep-ancient-frog-ad8rwyp2-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_REDIRECT_URI
+        value: https://hackers-brasil.onrender.com/login.php
+      - key: TURNSTILE_SITE_KEY
+        sync: false
+      - key: TURNSTILE_SECRET_KEY
+        sync: false
+      - key: MAIL_HOST
+        value: smtp.gmail.com
+      - key: MAIL_PORT
+        value: 587
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_FROM_NAME
+        value: Portal Hackers Brasil

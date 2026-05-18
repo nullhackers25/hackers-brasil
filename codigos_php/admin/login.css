@@ -1,0 +1,115 @@
+/* ======== GLOBAL ======== */
+body {
+    margin: 0;
+    padding: 0;
+    background: #0e0e0e;
+    font-family: Arial, sans-serif;
+    color: #fff;
+}
+
+/* ======== LOGIN WRAPPER ======== */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 420px;
+    background: #111;
+    padding: 35px;
+    border-radius: 16px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    text-align: center;
+}
+
+/* ======== TITULOS ======== */
+.titulo-admin {
+    font-size: 28px;
+    margin-bottom: 5px;
+    color: cyan;
+}
+
+.subtitulo-admin {
+    font-size: 14px;
+    margin-bottom: 25px;
+    color: green;
+}
+
+/* ======== CAMPOS ======== */
+.campo {
+    text-align: left;
+    margin-bottom: 18px;
+}
+
+.campo label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: #cccccc;
+}
+
+.campo input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 15px;
+    outline: none;
+    transition: 0.2s;
+}
+
+.campo input:focus {
+    border-color: #4c8bff;
+    box-shadow: 0 0 6px rgba(76, 139, 255, 0.4);
+}
+
+/* ======== SENHA + ÍCONE ======== */
+.campo-senha {
+    position: relative;
+}
+
+.icone-senha {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    opacity: 0.7;
+    background-size: cover;
+    background-image: url("https://cdn-icons-png.flaticon.com/512/709/709612.png"); /* olho fechado */
+}
+
+.icone-senha:hover {
+    opacity: 1;
+}
+
+.icone-senha.mostrar {
+    background-image: url("https://cdn-icons-png.flaticon.com/512/159/159604.png"); /* olho aberto */
+}
+
+/* ======== BOTÃO ======== */
+.btn-login {
+    width: 100%;
+    background: #4c8bff;
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-login:hover {
+    background: #1f6fff;
+    box-shadow: 0 0 10px rgba(76, 139, 255, 0.5);
+}

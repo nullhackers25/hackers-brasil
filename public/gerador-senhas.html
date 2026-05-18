@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Senhas - Hackers Brasil</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Estilos baseados no CSS global */
+        :root {
+            --primary: #0d6efd;
+            --dark: #0a0e17;
+            --darker: #05080f;
+            --neon-green: #0fff50;
+            --neon-blue: #0af2ff;
+            --text-light: #e0e0e0;
+            --text-lighter: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Estilo Hacker */
+        header {
+            background-color: var(--darker);
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(10, 242, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            color: var(--neon-green);
+            text-shadow: 0 0 5px var(--neon-green);
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            color: var(--neon-blue);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            align-items: center;
+        }
+        
+        nav ul li {
+            margin-left: 25px;
+            position: relative;
+        }
+        
+        nav ul li a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 5px 0;
+        }
+        
+        nav ul li a:hover {
+            color: var(--neon-blue);
+            text-shadow: 0 0 5px var(--neon-blue);
+        }
+        
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--neon-blue);
+            transition: width 0.3s;
+        }
+        
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+        
+        .login-btn {
+            background: transparent;
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-left: 25px;
+            box-shadow: 0 0 5px var(--neon-green);
+        }
+        
+        .login-btn:hover {
+            background: var(--neon-green);
+            color: var(--dark);
+            box-shadow: 0 0 15px var(--neon-green);
+        }
+        
+        .mobile-menu {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        
+        /* Seção Sobre Hacking */
+        .about-hacking {
+            padding: 80px 0;
+            background-color: var(--darker);
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+        }
+        
+        .about-hacking::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(0deg, transparent 24%, rgba(15, 255, 80, 0.05) 25%, rgba(15, 255, 80, 0.05) 26%, transparent 27%, transparent 74%, rgba(15, 255, 80, 0.05) 75%, rgba(15, 255, 80, 0.05) 76%, transparent 77%, transparent),
+                linear-gradient(90deg, transparent 24%, rgba(15, 255, 80, 0.05) 25%, rgba(15, 255, 80, 0.05) 26%, transparent 27%, transparent 74%, rgba(15, 255, 80, 0.05) 75%, rgba(15, 255, 80, 0.05) 76%, transparent 77%, transparent);
+            background-size: 50px 50px;
+            opacity: 0.3;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        
+        .section-title h2 {
+            font-size: 2.2rem;
+            color: var(--neon-blue);
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px var(--neon-blue);
+        }
+        
+        .section-title p {
+            color: var(--text-light);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            position: relative;
+        }
+        
+        .about-text {
+            flex: 1;
+        }
+        
+        .about-text h3 {
+            font-size: 1.8rem;
+            color: var(--neon-green);
+            margin-bottom: 20px;
+        }
+        
+        .about-text p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+        
+        /* Container da ferramenta */
+        .calculator-container {
+            background: rgba(5, 8, 15, 0.8);
+            border: 1px solid var(--neon-blue);
+            border-radius: 10px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+        
+        /* Estilos específicos para o gerador de senhas */
+        .password-display {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--neon-blue);
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .password-text {
+            font-family: 'Courier New', monospace;
+            font-size: 1.5rem;
+            color: var(--neon-green);
+            word-break: break-all;
+            margin: 0;
+        }
+        
+        .copy-btn {
+            background: transparent;
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+        }
+        
+        .copy-btn:hover {
+            background: var(--neon-blue);
+            color: var(--dark);
+        }
+        
+        .copy-btn i {
+            margin-right: 5px;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .option-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(10, 242, 255, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .option-card h4 {
+            color: var(--neon-blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .option-card h4 i {
+            margin-right: 10px;
+        }
+        
+        .option-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        
+        .option-label {
+            color: var(--text-light);
+            font-weight: 500;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+        
+        .length-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            outline: none;
+            margin: 0;
+        }
+        
+        .length-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .length-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .length-value {
+            color: var(--neon-green);
+            font-weight: bold;
+            min-width: 30px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .checkbox-container input {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--neon-green);
+            cursor: pointer;
+        }
+        
+        .generate-btn {
+            background: transparent;
+            color: var(--neon-green);
+            border: 2px solid var(--neon-green);
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px var(--neon-green);
+            display: block;
+            margin: 0 auto;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .generate-btn:hover {
+            background: var(--neon-green);
+            color: var(--dark);
+            box-shadow: 0 0 20px var(--neon-green);
+        }
+        
+        .strength-meter {
+            margin: 30px 0;
+        }
+        
+        .strength-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .meter-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .meter-fill {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s;
+            border-radius: 5px;
+        }
+        
+        .external-links {
+            margin-top: 30px;
+        }
+        
+        .external-links h4 {
+            color: var(--neon-blue);
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .link-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(10, 242, 255, 0.2);
+            padding: 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .link-card:hover {
+            border-color: var(--neon-green);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(15, 255, 80, 0.2);
+        }
+        
+        .link-card a {
+            color: var(--neon-blue);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .link-card a i {
+            margin-right: 0;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--darker);
+            color: white;
+            padding: 60px 0 20px;
+            border-top: 1px solid rgba(10, 242, 255, 0.2);
+            position: relative;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column h3 {
+            color: var(--neon-blue);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column ul li a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column ul li a:hover {
+            color: var(--neon-green);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsividade */
+        @media (max-width: 992px) {
+            .about-content {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 20px;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            nav ul li {
+                margin: 10px 0;
+            }
+            
+            .login-btn {
+                margin: 20px 0 0;
+            }
+            
+            .mobile-menu {
+                display: block;
+                margin-top: 20px;
+            }
+            
+            nav ul {
+                display: none;
+            }
+            
+            nav ul.active {
+                display: flex;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .password-text {
+                font-size: 1.2rem;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .password-display {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .copy-btn {
+                align-self: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-code"></i>
+                    Hackers Brasil
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="sobre.html">Sobre</a></li>
+                        <li><a href="ferramentas.html">Ferramentas</a></li>
+                        <li><a href="recursos.html">Recursos</a></li>
+                        <li><a href="contato.html">Contato</a></li>
+                        <li><button class="login-btn">Login</button></li>
+                    </ul>
+                </nav>
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Gerador de Senhas -->
+    <section class="about-hacking">
+        <div class="container">
+            <div class="section-title">
+                <h2><i class="fas fa-key"></i> Gerador de Senhas</h2>
+                <p>Crie senhas fortes e seguras para proteger suas contas</p>
+            </div>
+
+            <div class="about-content">
+                <div class="about-text">
+                    <div class="calculator-container">
+                        <!-- Senha Gerada -->
+                        <div class="password-display">
+                            <div class="password-text" id="passwordDisplay">Clique em "Gerar Senha"</div>
+                            <button class="copy-btn" id="copyBtn">
+                                <i class="fas fa-copy"></i> Copiar
+                            </button>
+                        </div>
+
+                        <!-- Opções de Senha -->
+                        <div class="options-grid">
+                            <!-- Comprimento da Senha -->
+                            <div class="option-card">
+                                <h4><i class="fas fa-ruler"></i> Comprimento</h4>
+                                <div class="option-item">
+                                    <div class="slider-container">
+                                        <input type="range" min="8" max="32" value="16" class="length-slider" id="lengthSlider">
+                                        <span class="length-value" id="lengthValue">16</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tipos de Caracteres -->
+                            <div class="option-card">
+                                <h4><i class="fas fa-font"></i> Tipos de Caracteres</h4>
+                                <div class="option-item">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="uppercaseCheck" checked>
+                                        <span class="option-label">Letras Maiúsculas (A-Z)</span>
+                                    </label>
+                                </div>
+                                <div class="option-item">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="lowercaseCheck" checked>
+                                        <span class="option-label">Letras Minúsculas (a-z)</span>
+                                    </label>
+                                </div>
+                                <div class="option-item">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="numbersCheck" checked>
+                                        <span class="option-label">Números (0-9)</span>
+                                    </label>
+                                </div>
+                                <div class="option-item">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="symbolsCheck" checked>
+                                        <span class="option-label">Símbolos (!@#$%&*)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Configurações Avançadas -->
+                            <div class="option-card">
+                                <h4><i class="fas fa-cogs"></i> Configurações</h4>
+                                <div class="option-item">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="excludeSimilarCheck">
+                                        <span class="option-label">Excluir caracteres similares (0,O,1,l)</span>
+                                    </label>
+                                </div>
+                                <div class="option-item">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="excludeAmbiguousCheck">
+                                        <span class="option-label">Excluir caracteres ambíguos ({ } [ ] ( ) / \ ' " ` ~ , ; : .)</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Medidor de Força -->
+                        <div class="strength-meter">
+                            <div class="strength-label">
+                                <span>Força da Senha:</span>
+                                <span id="strengthText">-</span>
+                            </div>
+                            <div class="meter-bar">
+                                <div class="meter-fill" id="strengthMeter"></div>
+                            </div>
+                        </div>
+
+                        <!-- Botão Gerar -->
+                        <button class="generate-btn" id="generateBtn">
+                            <i class="fas fa-sync-alt"></i> Gerar Nova Senha
+                        </button>
+                    </div>
+
+                    <!-- Informações Educativas -->
+                    <div style="margin-top: 40px; padding: 20px; background: rgba(15, 255, 80, 0.1); border-radius: 5px; border-left: 3px solid var(--neon-green);">
+                        <h4 style="color: var(--neon-green); margin-bottom: 10px;"><i class="fas fa-graduation-cap"></i> Dicas para Senhas Seguras</h4>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><strong>Comprimento:</strong> Use pelo menos 12 caracteres</li>
+                            <li><strong>Complexidade:</strong> Combine letras, números e símbolos</li>
+                            <li><strong>Exclusividade:</strong> Não reutilize senhas entre serviços</li>
+                            <li><strong>Atualização:</strong> Mude senhas regularmente</li>
+                            <li><strong>Armazenamento:</strong> Use um gerenciador de senhas confiável</li>
+                        </ul>
+                    </div>
+
+                    <!-- Links para outras ferramentas -->
+                    <div class="external-links" style="margin-top: 40px;">
+                        <h4>Mais Ferramentas de Segurança</h4>
+                        <div class="links-grid">
+                            <div class="link-card">
+                                <a href="calculadora-ip.html">
+                                    <i class="fas fa-calculator"></i> Calculadora IP
+                                </a>
+                            </div>
+                            <div class="link-card">
+                                <a href="qual-meu-ip.html">
+                                    <i class="fas fa-map-marker-alt"></i> Qual Meu IP?
+                                </a>
+                            </div>
+                            <div class="link-card">
+                                <a href="ferramentas.html">
+                                    <i class="fas fa-tools"></i> Todas as Ferramentas
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Hackers Brasil</h3>
+                    <p>Comunidade dedicada ao ensino ético de segurança da informação.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="sobre.html">Sobre</a></li>
+                        <li><a href="ferramentas.html">Ferramentas</a></li>
+                        <li><a href="recursos.html">Recursos</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="termos-de-servico.html">Termos de Serviço</a></li>
+                        <li><a href="politica-privacidade.html">Política de Privacidade</a></li>
+                        <li><a href="codigo-conduta.html">Código de Conduta</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2024 Hackers Brasil. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Elementos DOM
+        const passwordDisplay = document.getElementById('passwordDisplay');
+        const copyBtn = document.getElementById('copyBtn');
+        const generateBtn = document.getElementById('generateBtn');
+        const lengthSlider = document.getElementById('lengthSlider');
+        const lengthValue = document.getElementById('lengthValue');
+        const uppercaseCheck = document.getElementById('uppercaseCheck');
+        const lowercaseCheck = document.getElementById('lowercaseCheck');
+        const numbersCheck = document.getElementById('numbersCheck');
+        const symbolsCheck = document.getElementById('symbolsCheck');
+        const excludeSimilarCheck = document.getElementById('excludeSimilarCheck');
+        const excludeAmbiguousCheck = document.getElementById('excludeAmbiguousCheck');
+        const strengthMeter = document.getElementById('strengthMeter');
+        const strengthText = document.getElementById('strengthText');
+
+        // Conjuntos de caracteres
+        const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
+        const numberChars = '0123456789';
+        const symbolChars = '!@#$%&*()_+-=[]{}|;:,.<>?';
+
+        // Caracteres a excluir
+        const similarChars = '0O1lI';
+        const ambiguousChars = '{}[]()/\\\'"`~,;:.<>';
+
+        // Atualizar valor do comprimento
+        lengthSlider.addEventListener('input', function() {
+            lengthValue.textContent = this.value;
+        });
+
+        // Gerar senha
+        generateBtn.addEventListener('click', generatePassword);
+
+        // Copiar senha
+        copyBtn.addEventListener('click', copyPassword);
+
+        // Gerar senha
+        function generatePassword() {
+            let length = parseInt(lengthSlider.value);
+            let charSet = '';
+            let password = '';
+
+            // Verificar se pelo menos um tipo de caractere está selecionado
+            if (!uppercaseCheck.checked && !lowercaseCheck.checked && 
+                !numbersCheck.checked && !symbolsCheck.checked) {
+                alert('Selecione pelo menos um tipo de caractere!');
+                return;
+            }
+
+            // Adicionar conjuntos de caracteres selecionados
+            if (uppercaseCheck.checked) charSet += uppercaseChars;
+            if (lowercaseCheck.checked) charSet += lowercaseChars;
+            if (numbersCheck.checked) charSet += numberChars;
+            if (symbolsCheck.checked) charSet += symbolChars;
+
+            // Remover caracteres similares se selecionado
+            if (excludeSimilarCheck.checked) {
+                for (let char of similarChars) {
+                    charSet = charSet.replace(new RegExp(char, 'g'), '');
+                }
+            }
+
+            // Remover caracteres ambíguos se selecionado
+            if (excludeAmbiguousCheck.checked) {
+                for (let char of ambiguousChars) {
+                    charSet = charSet.replace(new RegExp('\\' + char, 'g'), '');
+                }
+            }
+
+            // Verificar se ainda temos caracteres disponíveis
+            if (charSet.length === 0) {
+                alert('Nenhum caractere disponível com as configurações atuais!');
+                return;
+            }
+
+            // Garantir que pelo menos um caractere de cada tipo selecionado seja incluído
+            let guaranteedChars = '';
+            if (uppercaseCheck.checked && uppercaseChars.length > 0) {
+                const randomUpper = uppercaseChars[Math.floor(Math.random() * uppercaseChars.length)];
+                guaranteedChars += randomUpper;
+            }
+            if (lowercaseCheck.checked && lowercaseChars.length > 0) {
+                const randomLower = lowercaseChars[Math.floor(Math.random() * lowercaseChars.length)];
+                guaranteedChars += randomLower;
+            }
+            if (numbersCheck.checked && numberChars.length > 0) {
+                const randomNumber = numberChars[Math.floor(Math.random() * numberChars.length)];
+                guaranteedChars += randomNumber;
+            }
+            if (symbolsCheck.checked && symbolChars.length > 0) {
+                const randomSymbol = symbolChars[Math.floor(Math.random() * symbolChars.length)];
+                guaranteedChars += randomSymbol;
+            }
+
+            // Gerar o restante da senha
+            const remainingLength = length - guaranteedChars.length;
+            for (let i = 0; i < remainingLength; i++) {
+                const randomIndex = Math.floor(Math.random() * charSet.length);
+                password += charSet[randomIndex];
+            }
+
+            // Adicionar caracteres garantidos e embaralhar
+            password += guaranteedChars;
+            password = shuffleString(password);
+
+            // Exibir senha
+            passwordDisplay.textContent = password;
+
+            // Atualizar força da senha
+            updatePasswordStrength(password);
+        }
+
+        // Embaralhar string
+        function shuffleString(string) {
+            const array = string.split('');
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array.join('');
+        }
+
+        // Copiar senha para área de transferência
+        function copyPassword() {
+            const password = passwordDisplay.textContent;
+            if (password === 'Clique em "Gerar Senha"') {
+                alert('Gere uma senha primeiro!');
+                return;
+            }
+
+            navigator.clipboard.writeText(password).then(() => {
+                // Feedback visual
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+                copyBtn.style.backgroundColor = 'var(--neon-green)';
+                copyBtn.style.color = 'var(--dark)';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.backgroundColor = 'transparent';
+                    copyBtn.style.color = 'var(--neon-blue)';
+                }, 2000);
+            }).catch(err => {
+                console.error('Erro ao copiar: ', err);
+                alert('Erro ao copiar senha. Tente novamente.');
+            });
+        }
+
+        // Atualizar força da senha
+        function updatePasswordStrength(password) {
+            let strength = 0;
+            const length = password.length;
+
+            // Pontuação baseada no comprimento
+            if (length >= 8) strength += 1;
+            if (length >= 12) strength += 1;
+            if (length >= 16) strength += 1;
+            if (length >= 20) strength += 1;
+
+            // Pontuação baseada na complexidade
+            if (/[A-Z]/.test(password)) strength += 1;
+            if (/[a-z]/.test(password)) strength += 1;
+            if (/[0-9]/.test(password)) strength += 1;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+
+            // Atualizar visualização
+            let percentage = (strength / 8) * 100;
+            strengthMeter.style.width = `${percentage}%`;
+
+            // Atualizar texto e cor
+            if (strength <= 2) {
+                strengthMeter.style.backgroundColor = '#ff4444';
+                strengthText.textContent = 'Fraca';
+            } else if (strength <= 4) {
+                strengthMeter.style.backgroundColor = '#ffaa00';
+                strengthText.textContent = 'Média';
+            } else if (strength <= 6) {
+                strengthMeter.style.backgroundColor = '#ffff00';
+                strengthText.textContent = 'Forte';
+            } else {
+                strengthMeter.style.backgroundColor = '#00ff00';
+                strengthText.textContent = 'Muito Forte';
+            }
+        }
+
+        // Inicializar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar o valor do slider
+            if (lengthValue && lengthSlider) {
+                lengthValue.textContent = lengthSlider.value;
+            }
+            
+            // Inicializar medidor de força
+            if (strengthMeter && strengthText) {
+                strengthMeter.style.width = '0%';
+                strengthText.textContent = '-';
+            }
+        });
+    </script>
+</body>
+</html>

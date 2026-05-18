@@ -1,0 +1,43 @@
+cd /var/www/html/Hackers_Brasil_New
+
+# Criar o arquivo .gitignore
+cat > .gitignore << 'EOF'
+# Arquivos de ambiente e configuração
+.env
+.env.local
+.env.*.local
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# IDE e editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Cache e logs
+cache/
+logs/
+*.cache
+
+# Arquivos do Composer (se usar)
+vendor/
+composer.lock
+
+# Arquivos de backup
+*.bak
+*.old
+*.orig
+
+# Render (opcional - não commitar)
+.DS_Store
+EOF
+
+# Verificar se criou
+cat .gitignore
+Consultar/Google_Cloud.json
+*.json
